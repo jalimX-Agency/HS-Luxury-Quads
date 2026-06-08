@@ -1,7 +1,7 @@
 import { tours, type Locale, type LocalizedString, type Tour } from './tours';
 
 const siteUrl = 'https://hsluxuryquads.com';
-const brandName = 'HS Luxury Quads Morocco';
+const brandName = 'HS Luxury Quads';
 const defaultOgImage = `${siteUrl}/images/og/agafay-luxury-quad.jpg`;
 
 export interface SeoConfig {
@@ -132,8 +132,8 @@ export const seoConfig: Record<string, SeoConfig> = {
   },
   about: {
     title: localized(
-      'About HS Luxury Quads Morocco | Premium Agafay Desert Experiences',
-      'A propos de HS Luxury Quads Morocco | Experiences premium a Agafay',
+      'About HS Luxury Quads | Premium Agafay Desert Experiences',
+      'A propos de HS Luxury Quads | Experiences premium a Agafay',
     ),
     description: localized(
       'Meet the Marrakech team behind refined private quad tours in Agafay Desert, combining Moroccan hospitality, safety, and premium adventure.',
@@ -195,12 +195,12 @@ export const seoConfig: Record<string, SeoConfig> = {
   },
   contact: {
     title: localized(
-      'Contact HS Luxury Quads Morocco | Private Agafay Quad Tours',
-      'Contact HS Luxury Quads Morocco | Tours prives quad Agafay',
+      'Contact HS Luxury Quads | Private Agafay Quad Tours',
+      'Contact HS Luxury Quads | Tours prives quad Agafay',
     ),
     description: localized(
-      'Contact HS Luxury Quads Morocco for premium quad biking, private Agafay tours, concierge requests, and custom Marrakech adventure planning.',
-      'Contactez HS Luxury Quads Morocco pour quad premium, tours prives a Agafay, demandes conciergerie et aventures sur mesure a Marrakech.',
+      'Contact HS Luxury Quads for premium quad biking, private Agafay tours, concierge requests, and custom Marrakech adventure planning.',
+      'Contactez HS Luxury Quads pour quad premium, tours prives a Agafay, demandes conciergerie et aventures sur mesure a Marrakech.',
     ),
     keywords: keywords(
       ['contact luxury quad marrakech', 'contact quad luxe marrakech'],
@@ -247,7 +247,7 @@ export const allSeoConfig = {
 
 // Google Business Profile optimization tips:
 // - Primary category: "Tour operator"; secondary categories can include "Adventure sports" and "ATV rental service" if accurate.
-// - Use "HS Luxury Quads Morocco" consistently across website, GBP, Instagram, WhatsApp, and booking partners.
+// - Use "HS Luxury Quads" consistently across website, GBP, Instagram, WhatsApp, and booking partners.
 // - Add service names that match search intent: Luxury Quad Marrakech, Quad Agafay, Agafay Desert Quad Biking, Private Quad Tour Marrakech.
 // - Upload real high-resolution photos weekly: vehicles, helmets, guides, transfers, sunset rides, dinner setup, and guest viewpoints.
 // - Create GBP posts for seasonal moments: sunset dinner rides, private luxury quad tours, honeymoon experiences, and family-friendly Agafay rides.

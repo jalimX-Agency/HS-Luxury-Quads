@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ─── DARK MODE (default) ─────────────────────────────────── */
+  :root,
+  :root[data-theme="dark"] {
+    --background: 8% 0.010 75;
+    --background-subtle: 12% 0.014 75;
+    --background-sunken: 6% 0.008 75;
+    --ink: 94% 0.008 80;
+    --ink-muted: 62% 0.012 78;
+    --ink-faint: 38% 0.010 78;
+    --gold: 74% 0.130 72;
+    --gold-light: 84% 0.100 72;
+    --gold-faint: 20% 0.050 72;
+    --rule: 22% 0.014 75;
+    --white: 94% 0.008 80;
+    --overlay: 8% 0.010 75 / 0.92;
+  }
+
+  /* ─── LIGHT MODE ─────────────────────────────────────────── */
+  :root[data-theme="light"] {
+    --background: 97% 0.010 82;
+    --background-subtle: 93% 0.016 80;
+    --background-sunken: 88% 0.020 78;
+    --ink: 10% 0.010 75;
+    --ink-muted: 38% 0.016 78;
+    --ink-faint: 65% 0.012 80;
+    --gold: 56% 0.130 66;
+    --gold-light: 68% 0.110 68;
+    --gold-faint: 90% 0.055 76;
+    --rule: 76% 0.016 80;
+    --white: 99% 0.003 80;
+    --overlay: 97% 0.010 82 / 0.92;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: oklch(var(--background));
+    color: oklch(var(--ink));
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    font-weight: 300;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
+  }
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── ORNAMENT ──────────────────────────────────────────────── */
+.ornament-rule {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.ornament-rule::before,
+.ornament-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: oklch(var(--rule) / 0.5);
+}
+.ornament-diamond {
+  width: 5px;
+  height: 5px;
+  background: oklch(var(--gold));
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ─── HERO PARALLAX CONTAINER ───────────────────────────────── */
+.hero-image-wrap {
+  position: absolute;
+  inset: -8%;
+  will-change: transform;
+  transition: transform 12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── MARQUEE ───────────────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  gap: 0;
+  animation: marquee 28s linear infinite;
+  width: max-content;
+}
+
+/* ─── ANIMATIONS ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes lineGrow {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseGold {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: scaleY(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+
+.animate-fadeUp  { animation: fadeUp  0.9s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fadeIn  { animation: fadeIn  0.7s ease both; }
+.animate-scaleIn { animation: scaleIn 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-lineGrow{ animation: lineGrow 1.2s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-countUp { animation: countUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-pulse-gold { animation: pulseGold 2.4s ease-in-out infinite; }
+
+.delay-100  { animation-delay: 0.10s; }
+.delay-200  { animation-delay: 0.20s; }
+.delay-300  { animation-delay: 0.30s; }
+.delay-400  { animation-delay: 0.40s; }
+.delay-500  { animation-delay: 0.50s; }
+.delay-600  { animation-delay: 0.60s; }
+.delay-700  { animation-delay: 0.70s; }
+.delay-800  { animation-delay: 0.80s; }
+.delay-900  { animation-delay: 0.90s; }
+.delay-1000 { animation-delay: 1.00s; }
+
+/* ─── TOUR CARD HOVER REVEAL ───────────────────────────────── */
+.tour-card:hover .tour-card__image {
+  transform: scale(1.06);
+}
+.tour-card__image {
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tour-card:hover .tour-card__overlay {
+  opacity: 1;
+}
+.tour-card__overlay {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* ─── SPLIT TEXT ────────────────────────────────────────────── */
+.text-gradient-gold {
+  background: linear-gradient(
+    135deg,
+    oklch(84% 0.12 72) 0%,
+    oklch(74% 0.13 72) 45%,
+    oklch(64% 0.10 66) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── SECTION LABEL ─────────────────────────────────────────── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: oklch(var(--gold));
+}
+.section-label::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: oklch(var(--gold));
+}
+
+/* ─── GLASS CARD ────────────────────────────────────────────── */
+.glass-card {
+  background: oklch(var(--background-subtle) / 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid oklch(var(--rule) / 0.3);
+}
+
+/* ─── LUXURY BUTTON ─────────────────────────────────────────── */
+.btn-gold {
+  background: oklch(var(--gold));
+  color: oklch(8% 0.01 75);
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: oklch(var(--gold-light));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-gold:hover::after { transform: translateY(0); }
+.btn-gold span { position: relative; z-index: 1; }
+
+.btn-outline {
+  background: transparent;
+  color: oklch(var(--white));
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border: 1px solid oklch(var(--white) / 0.35);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-outline:hover {
+  border-color: oklch(var(--gold));
+  color: oklch(var(--gold));
+}
+
+/* ─── VERTICAL TICKER ───────────────────────────────────────── */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+/* ─── HOVER UNDERLINE ───────────────────────────────────────── */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: oklch(var(--gold));
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after { width: 100%; }
+
+/* ─── EDITORIAL GRID LINES ──────────────────────────────────── */
+.grid-line-v {
+  width: 1px;
+  background: oklch(var(--rule) / 0.2);
+}
+
+/* ─── TOUR LIST ITEM ────────────────────────────────────────── */
+.tour-list-item {
+  border-bottom: 1px solid oklch(var(--rule) / 0.25);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tour-list-item:hover {
+  border-bottom-color: oklch(var(--gold) / 0.6);
+}
+.tour-list-item:hover .tour-list-number {
+  color: oklch(var(--gold));
+}
+.tour-list-item:hover .tour-list-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+.tour-list-cta {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tour-list-number {
+  transition: color 0.3s ease;
+}
+
+/* ─── REVIEW CARD ───────────────────────────────────────────── */
+.review-card {
+  border-left: 1px solid oklch(var(--gold) / 0.3);
+  padding-left: 1.5rem;
+  transition: border-color 0.3s ease;
+}
+.review-card:hover {
+  border-left-color: oklch(var(--gold));
+}
+
+/* ─── IMAGE REVEAL ON HOVER (gallery) ──────────────────────── */
+.gallery-item {
+  overflow: hidden;
+}
+.gallery-item img {
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.9s ease;
+}
+.gallery-item:hover img {
+  transform: scale(1.08);
+  filter: saturate(1.1) brightness(1.05);
+}
+
+/* ─── SAFE AREA BOTTOM ───────────────────────────────────────── */
+.pb-safe {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
