@@ -66,6 +66,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          # Prisma generate only needs a placeholder URL during build
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?schema=public
+          SESSION_SECRET: ci-session-secret-placeholder
           # Pass secrets as empty strings in CI so Vercel env vars are used at runtime
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID || '' }}
           NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://hsluxuryquads.com' }}

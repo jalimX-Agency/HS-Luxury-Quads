@@ -3,73 +3,14 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import type { Locale } from '@/content/tours';
-
-interface GalleryImage {
-  id: number;
-  url: string;
-  alt: {
-    en: string;
-    fr: string;
-  };
-}
-
-// Local images — guaranteed to always load
-const galleryImages: GalleryImage[] = [
-  {
-    id: 1,
-    url: '/images/hero-agafay.png',
-    alt: {
-      en: 'Agafay desert stone plains at golden hour',
-      fr: 'Plaines pierreuses d\'Agafay à l\'heure dorée',
-    },
-  },
-  {
-    id: 2,
-    url: '/images/tour-2h.png',
-    alt: {
-      en: 'Luxury quad biking in Agafay desert',
-      fr: 'Quad de luxe dans le désert d\'Agafay',
-    },
-  },
-  {
-    id: 3,
-    url: '/images/gallery-atlas.png',
-    alt: {
-      en: 'Atlas Mountains panorama from Agafay',
-      fr: 'Panorama de l\'Atlas depuis Agafay',
-    },
-  },
-  {
-    id: 4,
-    url: '/images/tour-sunset.png',
-    alt: {
-      en: 'Luxury desert dinner at sunset',
-      fr: 'Dîner de luxe dans le désert au coucher du soleil',
-    },
-  },
-  {
-    id: 5,
-    url: '/images/gallery-tea.png',
-    alt: {
-      en: 'Traditional Moroccan mint tea ceremony',
-      fr: 'Cérémonie traditionnelle du thé à la menthe marocain',
-    },
-  },
-  {
-    id: 6,
-    url: '/images/tour-private.png',
-    alt: {
-      en: 'Private quad over Agafay plateau',
-      fr: 'Quad privé sur le plateau d\'Agafay',
-    },
-  },
-];
+import type { ApiGalleryItem } from '@/lib/api-client';
 
 interface GalleryProps {
   locale: Locale;
+  images: ApiGalleryItem[];
 }
 
-export default function Gallery({ locale }: GalleryProps) {
+export default function Gallery({ locale, images }: GalleryProps) {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => {
@@ -82,21 +23,28 @@ export default function Gallery({ locale }: GalleryProps) {
 
   const nextImage = () => {
     if (activeImageIndex !== null) {
-      setActiveImageIndex((activeImageIndex + 1) % galleryImages.length);
+      setActiveImageIndex((activeImageIndex + 1) % images.length);
     }
   };
 
   const prevImage = () => {
     if (activeImageIndex !== null) {
-      setActiveImageIndex((activeImageIndex - 1 + galleryImages.length) % galleryImages.length);
+      setActiveImageIndex((activeImageIndex - 1 + images.length) % images.length);
     }
   };
 
+  if (images.length === 0) {
+    return (
+      <p className="text-center text-ink-muted font-sans text-sm">
+        {locale === 'en' ? 'Gallery images will appear here soon.' : 'Les images de la galerie seront bientôt disponibles.'}
+      </p>
+    );
+  }
+
   return (
     <div className="w-full">
-      {/* Asymmetric Gallery Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-0.5 border border-rule/20 bg-rule/10">
-        {galleryImages.map((img, index) => (
+        {images.map((img, index) => (
           <div
             key={img.id}
             onClick={() => openLightbox(index)}
@@ -119,10 +67,8 @@ export default function Gallery({ locale }: GalleryProps) {
         ))}
       </div>
 
-      {/* Lightbox Modal */}
       {activeImageIndex !== null && (
         <div className="fixed inset-0 z-[100] bg-background/96 backdrop-blur-md flex items-center justify-center p-6 animate-fadeIn">
-          {/* Close Button */}
           <button
             onClick={closeLightbox}
             className="absolute top-6 right-6 w-10 h-10 border border-rule/30 flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold transition-colors z-[110]"
@@ -130,7 +76,6 @@ export default function Gallery({ locale }: GalleryProps) {
             ✕
           </button>
 
-          {/* Nav buttons */}
           <button
             onClick={prevImage}
             className="absolute left-6 w-10 h-10 border border-rule/30 flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold transition-colors z-[110]"
@@ -147,15 +92,15 @@ export default function Gallery({ locale }: GalleryProps) {
           <div className="relative max-w-5xl max-h-[75vh] w-full h-full flex flex-col items-center justify-center">
             <div className="relative w-full h-full">
               <Image
-                alt={galleryImages[activeImageIndex].alt[locale]}
-                src={galleryImages[activeImageIndex].url}
+                alt={images[activeImageIndex].alt[locale]}
+                src={images[activeImageIndex].url}
                 fill
                 className="object-contain filter saturate-[0.9]"
                 priority
               />
             </div>
             <p className="font-syne text-[10px] text-center text-gold mt-6 tracking-widest uppercase">
-              {galleryImages[activeImageIndex].alt[locale]}
+              {images[activeImageIndex].alt[locale]}
             </p>
           </div>
         </div>

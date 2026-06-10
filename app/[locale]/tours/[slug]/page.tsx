@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { tours } from '@/content/tours';
 import { tourSeoConfig } from '@/content/seo';
+import { getTourBySlug } from '@/lib/api-client';
+import { prisma } from '@/lib/prisma';
+import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingForm from '@/components/booking/BookingForm';
@@ -16,54 +18,69 @@ interface PageProps {
   };
 }
 
+const imageMap: Record<string, string> = {
+  'quad-agafay-2h': '/images/tour-2h.png',
+  'quad-sunset-dinner': '/images/tour-sunset.png',
+  'private-luxury-quad': '/images/tour-private.png',
+};
+
 export async function generateStaticParams() {
-  const params: Array<{ locale: string; slug: string }> = [];
-  tours.forEach((tour) => {
-    params.push({ locale: 'en', slug: tour.slug });
-    params.push({ locale: 'fr', slug: tour.slug });
+  const tours = await prisma.tour.findMany({
+    where: { isActive: true },
+    select: { slug: true },
   });
-  return params;
+
+  return tours.flatMap((tour) => [
+    { locale: 'en', slug: tour.slug },
+    { locale: 'fr', slug: tour.slug },
+  ]);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const slug = params.slug as keyof typeof tourSeoConfig;
-  const seo = tourSeoConfig[slug];
 
-  if (!seo) return {};
+  const seo = tourSeoConfig[params.slug as keyof typeof tourSeoConfig];
+  if (seo) {
+    return {
+      title: seo.title[locale],
+      description: seo.description[locale],
+    };
+  }
 
-  return {
-    title: seo.title[locale],
-    description: seo.description[locale],
-  };
+  try {
+    const { tour } = await getTourBySlug(params.slug);
+    return {
+      title: `${tour.title[locale]} | HS Luxury Quads`,
+      description: tour.shortDescription[locale],
+    };
+  } catch {
+    return {};
+  }
 }
 
-export default function TourDetailPage({ params }: PageProps) {
+export default async function TourDetailPage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
 
   if (locale !== 'en' && locale !== 'fr') {
     notFound();
   }
 
-  const tour = tours.find((t) => t.slug === params.slug);
-
-  if (!tour) {
+  let data;
+  try {
+    data = await getTourBySlug(params.slug);
+  } catch {
     notFound();
   }
 
-  const imageMap: Record<string, string> = {
-    'quad-agafay-2h':    '/images/tour-2h.png',
-    'quad-sunset-dinner': '/images/tour-sunset.png',
-    'private-luxury-quad': '/images/tour-private.png',
-  };
+  const tour = toTour(data.tour);
+  const toursList = [tour];
 
   return (
     <>
       <Navbar locale={locale} />
       <TourTracker tour={tour} locale={locale} />
 
-      {/* Hero Banner */}
       <header className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-black z-0">
           <Image
@@ -90,11 +107,8 @@ export default function TourDetailPage({ params }: PageProps) {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="py-20 px-gutter max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Left column - details */}
         <div className="lg:col-span-2 space-y-12">
-          {/* Description */}
           <section className="space-y-6">
             <h2 className="font-display font-semibold text-2xl text-ink">
               {locale === 'en' ? 'Experience Details' : 'Détails de l\'Expérience'}
@@ -104,7 +118,6 @@ export default function TourDetailPage({ params }: PageProps) {
             </p>
           </section>
 
-          {/* Highlights */}
           <section className="space-y-6 bg-bg-subtle p-8 md:p-10 border border-rule/35">
             <h3 className="font-syne text-[10px] font-semibold tracking-widest text-gold uppercase">
               {locale === 'en' ? 'Highlights' : 'Points Forts'}
@@ -119,7 +132,6 @@ export default function TourDetailPage({ params }: PageProps) {
             </ul>
           </section>
 
-          {/* Includes */}
           <section className="space-y-6">
             <h3 className="font-syne text-[10px] font-semibold tracking-widest text-gold uppercase">
               {locale === 'en' ? 'What\'s Included' : 'Ce qui est Inclus'}
@@ -134,7 +146,6 @@ export default function TourDetailPage({ params }: PageProps) {
             </ul>
           </section>
 
-          {/* FAQs */}
           <section className="space-y-6">
             <h3 className="font-syne text-[10px] font-semibold tracking-widest text-gold uppercase">
               {locale === 'en' ? 'Frequently Asked Questions' : 'Questions Fréquentes'}
@@ -150,14 +161,13 @@ export default function TourDetailPage({ params }: PageProps) {
           </section>
         </div>
 
-        {/* Right column - sticky booking form */}
         <div className="lg:col-span-1">
           <div className="sticky top-28 space-y-6">
             <div className="bg-bg-subtle p-6 border border-rule/35">
               <h3 className="font-syne text-[10px] font-semibold tracking-widest text-ink uppercase text-center mb-6">
                 {locale === 'en' ? 'Request Availability' : 'Demander la Disponibilité'}
               </h3>
-              <BookingForm locale={locale} toursList={tours} defaultTourSlug={tour.slug} />
+              <BookingForm locale={locale} toursList={toursList} defaultTourSlug={tour.slug} />
             </div>
           </div>
         </div>

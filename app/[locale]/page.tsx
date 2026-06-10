@@ -3,9 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { tours } from '@/content/tours';
 import { homepageContent, aboutContent } from '@/content/ui';
 import { seoConfig } from '@/content/seo';
+import { getReviews, getTours } from '@/lib/api-client';
+import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -42,9 +43,12 @@ const IMAGES = {
 
 const tourImages = [IMAGES.tourOne, IMAGES.tourTwo, IMAGES.tourThree];
 
-export default function HomePage({ params }: PageProps) {
+export default async function HomePage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') notFound();
+
+  const [apiTours, apiReviews] = await Promise.all([getTours(), getReviews()]);
+  const tours = apiTours.map(toTour);
 
   const content = homepageContent;
   const t = {
@@ -81,7 +85,14 @@ export default function HomePage({ params }: PageProps) {
     reviewsLabel: locale === 'en' ? 'Guest Voices' : 'Témoignages',
   };
 
-  const reviews = [
+  const reviews = apiReviews.slice(0, 3).map((review) => ({
+    text: `"${review.text[locale]}"`,
+    author: review.name,
+    origin: review.country,
+    tour: review.tourTitle?.[locale] ?? '',
+  }));
+
+  const fallbackReviews = [
     {
       text: locale === 'en'
         ? '"Absolutely the most breathtaking experience of our entire trip to Morocco. The private guide was exceptional."'
@@ -107,6 +118,8 @@ export default function HomePage({ params }: PageProps) {
       tour: locale === 'en' ? '2-Hour Desert Ride' : 'Balade Désert 2 Heures',
     },
   ];
+
+  const displayedReviews = reviews.length > 0 ? reviews : fallbackReviews;
 
   return (
     <>
@@ -528,7 +541,7 @@ export default function HomePage({ params }: PageProps) {
         <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
           <p className="section-label mb-16">{t.reviewsLabel}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-            {reviews.map((review, i) => (
+            {displayedReviews.map((review, i) => (
               <div key={i} className="review-card">
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-5">

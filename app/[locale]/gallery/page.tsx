@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { seoConfig } from '@/content/seo';
+import { getGallery } from '@/lib/api-client';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Gallery from '@/components/ui/Gallery';
@@ -15,20 +15,20 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const seo = seoConfig.contact; // Fallback or standard config
   return {
     title: locale === 'en' ? 'Agafay Desert Photo Gallery | HS Luxury Quads' : 'Galerie Photo du Désert d\'Agafay | HS Luxury Quads',
     description: locale === 'en' ? 'Explore visual highlights of premium quad biking expeditions and sunset moments in Marrakech.' : 'Découvrez les clichés exclusifs de nos randonnées en quad et couchers de soleil à Marrakech.',
   };
 }
 
-export default function GalleryPage({ params }: PageProps) {
+export default async function GalleryPage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
 
   if (locale !== 'en' && locale !== 'fr') {
     notFound();
   }
 
+  const images = await getGallery();
 
   return (
     <>
@@ -36,7 +36,6 @@ export default function GalleryPage({ params }: PageProps) {
 
       <main className="min-h-screen pt-32 pb-16">
         <div className="max-w-container-max mx-auto px-gutter">
-          {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16 animate-fadeIn">
             <span className="text-primary font-accent text-lg italic block mb-3">
               {locale === 'en' ? 'Captured Moments' : 'Instants Capturés'}
@@ -51,8 +50,7 @@ export default function GalleryPage({ params }: PageProps) {
             </p>
           </div>
 
-          {/* Gallery Component */}
-          <Gallery locale={locale} />
+          <Gallery locale={locale} images={images} />
         </div>
       </main>
 

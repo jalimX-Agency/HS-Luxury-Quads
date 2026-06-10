@@ -39,6 +39,9 @@ Thumbs.db
 *.tsbuildinfo
 next-env.d.ts
 
+# ─── Prisma ───────────────────────────────────────────────────────────────────
+/generated
+
 # ─── Testing ──────────────────────────────────────────────────────────────────
 coverage/
 .nyc_output/
@@ -46,3 +49,15 @@ coverage/
 # ─── Logs ────────────────────────────────────────────────────────────────────
 *.log
 logs/
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+.cursor/
+.cursorrules
+.cursorignore
+.cursorignorerules
+.cursorignorerulesrules
+.cursorignorerulesrulesrules
+.cursorignorerulesrulesrulesrules
+.cursorignorerulesrulesrulesrulesrules
+.cursorignorerulesrulesrulesrulesrulesrules
+.cursorignorerulesrulesrulesrulesrulesrulesrules

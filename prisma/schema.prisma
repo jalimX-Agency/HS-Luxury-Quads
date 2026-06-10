@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum UserRole {
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Tour {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            Json
+  shortDescription Json
+  fullDescription  Json
+  includes         Json
+  highlights       Json
+  faqs             Json
+  priceAmount      Int
+  priceCurrency    String    @default("EUR")
+  priceDisplay     Json
+  duration         Json
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  bookings         Booking[]
+  reviews          Review[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  reference     String        @unique
+  tourId        String
+  tour          Tour          @relation(fields: [tourId], references: [id])
+  customerName  String
+  customerEmail String
+  customerPhone String
+  preferredDate DateTime      @db.Date
+  guests        Int
+  pickup        String?
+  message       String?
+  status        BookingStatus @default(PENDING)
+  totalAmount   Int?
+  currency      String        @default("EUR")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([tourId])
+  @@index([customerEmail])
+  @@index([status])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  tourId      String?
+  tour        Tour?    @relation(fields: [tourId], references: [id])
+  name        String
+  rating      Int
+  country     String
+  flag        String
+  reviewDate  String
+  text        Json
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([isPublished])
+}
+
+model Gallery {
+  id        String   @id @default(cuid())
+  url       String
+  alt       Json
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@index([isActive])
+}
