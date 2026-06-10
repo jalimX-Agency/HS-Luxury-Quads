@@ -69,6 +69,10 @@ export default async function AdminDashboardPage() {
           <p className="font-syne text-[10px] uppercase tracking-widest text-gold">Manage</p>
           <p className="font-display text-2xl text-ink mt-2">Gallery</p>
         </Link>
+        <Link href="/admin/settings" className="block border border-rule/30 bg-bg-subtle p-5 hover:border-gold transition-colors cursor-pointer">
+          <p className="font-syne text-[10px] uppercase tracking-widest text-gold">Manage</p>
+          <p className="font-display text-2xl text-ink mt-2">Settings</p>
+        </Link>
       </div>
 
       <section>

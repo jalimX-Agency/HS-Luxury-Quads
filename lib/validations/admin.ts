@@ -62,6 +62,10 @@ export const tourCreateInputSchema = z.object({
   priceDisplay: optionalLocalizedStringSchema,
   duration: optionalLocalizedStringSchema,
   isActive: z.boolean().default(true),
+  viatorUrl: z.string().trim().url().optional().or(z.literal('')).default(''),
+  whatsappMsg: z.string().trim().max(500).optional().default(''),
+  images: z.array(z.string().url()).optional().default([]),
+  imageKeys: z.array(z.string()).optional().default([]),
 });
 
 export const tourWriteSchema = z.object({
@@ -81,6 +85,10 @@ export const tourWriteSchema = z.object({
   priceDisplay: optionalLocalizedStringSchema,
   duration: optionalLocalizedStringSchema,
   isActive: z.boolean().default(true),
+  viatorUrl: z.string().trim().url().optional().or(z.literal('')).default(''),
+  whatsappMsg: z.string().trim().max(500).optional().default(''),
+  images: z.array(z.string().url()).optional().default([]),
+  imageKeys: z.array(z.string()).optional().default([]),
 });
 
 export const tourUpdateSchema = tourWriteSchema.partial();
@@ -101,6 +109,7 @@ export const reviewUpdateSchema = reviewWriteSchema.partial();
 export const galleryWriteSchema = z.object({
   url: z.string().trim().min(1).max(500),
   alt: localizedStringSchema,
+  imageKey: z.string().trim().optional().nullable(),
   sortOrder: z.coerce.number().int().min(0).default(0),
   isActive: z.boolean().default(true),
 });

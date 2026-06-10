@@ -1,4 +1,7 @@
-import type { Dispatch, SetStateAction } from 'react';
+'use client';
+
+import Image from 'next/image';
+import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   FaqEditor,
   inputClass,
@@ -150,6 +153,143 @@ export function DetailsSection({ form, setForm }: SectionProps) {
 
 export function FaqsSection({ form, setForm }: SectionProps) {
   return <FaqEditor items={form.faqs} onChange={(faqs) => setForm({ ...form, faqs })} />;
+}
+
+export function LinksSection({ form, setForm }: SectionProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      // Step 1: get presigned URL
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+          folder: 'tours',
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to get upload URL');
+
+      const { data } = await res.json();
+
+      // Step 2: upload directly to R2
+      const uploadRes = await fetch(data.presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+
+      if (!uploadRes.ok) throw new Error('Upload to R2 failed');
+
+      setForm({
+        ...form,
+        images: [...form.images, data.publicUrl],
+        imageKeys: [...form.imageKeys, data.key],
+      });
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setForm({
+      ...form,
+      images: form.images.filter((_, i) => i !== index),
+      imageKeys: form.imageKeys.filter((_, i) => i !== index),
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className={labelClass}>Viator booking URL</label>
+        <input
+          className={inputClass}
+          value={form.viatorUrl}
+          onChange={(e) => setForm({ ...form, viatorUrl: e.target.value })}
+          placeholder="https://www.viator.com/en-MA/tours/..."
+          type="url"
+        />
+        <p className="text-xs text-ink-faint mt-1">
+          If set, tour cards will show a "Book on Viator" button instead of the details link.
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClass}>WhatsApp pre-filled message</label>
+        <textarea
+          className={inputClass}
+          rows={3}
+          value={form.whatsappMsg}
+          onChange={(e) => setForm({ ...form, whatsappMsg: e.target.value })}
+          placeholder="Hi, I'm interested in booking the 2-hour Agafay quad tour..."
+        />
+        <p className="text-xs text-ink-faint mt-1">
+          Pre-fills the WhatsApp message when a guest taps "WhatsApp Us" on the tour card.
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClass}>Tour images (R2)</label>
+
+        {/* Existing images */}
+        {form.images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+            {form.images.map((url, i) => (
+              <div key={i} className="relative group border border-rule/30 overflow-hidden">
+                <div className="relative h-28">
+                  <Image src={url} alt={`Tour image ${i + 1}`} fill className="object-cover" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute top-1 right-1 bg-black/70 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Upload button */}
+        <div className="border-2 border-dashed border-rule/40 p-6 text-center">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="font-syne text-[10px] tracking-wider uppercase px-4 py-2 border border-rule/40 text-ink-muted hover:border-gold hover:text-gold transition-colors disabled:opacity-50"
+          >
+            {uploading ? 'Uploading...' : '+ Upload image'}
+          </button>
+          <p className="text-xs text-ink-faint mt-2">JPEG, PNG, or WebP · max 10 MB</p>
+          {uploadError && <p className="text-xs text-red-400 mt-2">{uploadError}</p>}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function TourReviewSummary({ form }: { form: TourFormState }) {

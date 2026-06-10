@@ -42,6 +42,10 @@ model Tour {
   priceCurrency    String    @default("EUR")
   priceDisplay     Json
   duration         Json
+  images           String[]  @default([])
+  imageKeys        String[]  @default([])
+  viatorUrl        String?
+  whatsappMsg      String?
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -93,10 +97,17 @@ model Review {
   @@index([isPublished])
 }
 
+model SiteSettings {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model Gallery {
   id        String   @id @default(cuid())
   url       String
   alt       Json
+  imageKey  String?
   sortOrder Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())

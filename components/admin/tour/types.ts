@@ -13,6 +13,10 @@ export type TourFormState = {
   priceDisplay: { en: string; fr: string };
   duration: { en: string; fr: string };
   isActive: boolean;
+  viatorUrl: string;
+  whatsappMsg: string;
+  images: string[];
+  imageKeys: string[];
 };
 
 export const emptyTour: TourFormState = {
@@ -28,6 +32,10 @@ export const emptyTour: TourFormState = {
   priceDisplay: { en: '', fr: '' },
   duration: { en: '', fr: '' },
   isActive: true,
+  viatorUrl: '',
+  whatsappMsg: '',
+  images: [],
+  imageKeys: [],
 };
 
 export function toFormState(tour: ApiTour): TourFormState {
@@ -44,5 +52,9 @@ export function toFormState(tour: ApiTour): TourFormState {
     priceDisplay: tour.price.display,
     duration: tour.duration,
     isActive: tour.isActive,
+    viatorUrl: tour.viatorUrl ?? '',
+    whatsappMsg: tour.whatsappMsg ?? '',
+    images: tour.images ?? [],
+    imageKeys: tour.imageKeys ?? [],
   };
 }

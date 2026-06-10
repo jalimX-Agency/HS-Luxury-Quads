@@ -21,6 +21,10 @@ export interface ApiTour {
     display: LocalizedString;
   };
   duration: LocalizedString;
+  images: string[];
+  imageKeys: string[];
+  viatorUrl: string | null;
+  whatsappMsg: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -65,6 +69,9 @@ export function toTour(api: ApiTour): ContentTour {
       currency: api.price.currency as 'EUR',
     },
     duration: api.duration,
+    images: api.images,
+    viatorUrl: api.viatorUrl,
+    whatsappMsg: api.whatsappMsg,
   };
 }
 
@@ -84,6 +91,10 @@ export function serializeTour(tour: PrismaTour): ApiTour {
       display: asLocalizedString(tour.priceDisplay),
     },
     duration: asLocalizedString(tour.duration),
+    images: tour.images,
+    imageKeys: tour.imageKeys,
+    viatorUrl: tour.viatorUrl ?? null,
+    whatsappMsg: tour.whatsappMsg ?? null,
     isActive: tour.isActive,
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),

@@ -19,6 +19,7 @@ export default async function AdminGalleryPage() {
           alt: item.alt as { en: string; fr: string },
           sortOrder: item.sortOrder,
           isActive: item.isActive,
+          imageKey: item.imageKey,
         }))}
       />
     </AdminShell>

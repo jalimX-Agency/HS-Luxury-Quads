@@ -18,11 +18,6 @@ interface PageProps {
   };
 }
 
-const imageMap: Record<string, string> = {
-  'quad-agafay-2h': '/images/tour-2h.png',
-  'quad-sunset-dinner': '/images/tour-sunset.png',
-  'private-luxury-quad': '/images/tour-private.png',
-};
 
 export async function generateStaticParams() {
   const tours = await prisma.tour.findMany({
@@ -74,6 +69,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   }
 
   const tour = toTour(data.tour);
+  const heroImage = data.tour.images?.[0] ?? null;
   const toursList = [tour];
 
   return (
@@ -83,13 +79,15 @@ export default async function TourDetailPage({ params }: PageProps) {
 
       <header className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-black z-0">
-          <Image
-            alt={tour.title[locale]}
-            src={imageMap[tour.slug] || imageMap['quad-agafay-2h']}
-            fill
-            priority
-            className="object-cover opacity-50 filter saturate-[0.85]"
-          />
+          {heroImage && (
+            <Image
+              alt={tour.title[locale]}
+              src={heroImage}
+              fill
+              priority
+              className="object-cover opacity-50 filter saturate-[0.85]"
+            />
+          )}
         </div>
         <div className="absolute inset-0 bg-hero-overlay-dark dark:block hidden z-10" />
         <div className="absolute inset-0 bg-hero-overlay-light dark:hidden block z-10" />

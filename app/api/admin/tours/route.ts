@@ -46,6 +46,10 @@ export async function POST(request: NextRequest) {
         priceDisplay: data.priceDisplay,
         duration: data.duration,
         isActive: data.isActive,
+        viatorUrl: data.viatorUrl || null,
+        whatsappMsg: data.whatsappMsg || null,
+        images: data.images ?? [],
+        imageKeys: data.imageKeys ?? [],
       },
     });
 

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   AdminAlert,
   AdminButton,
@@ -18,6 +18,7 @@ interface GalleryRow {
   alt: { en: string; fr: string };
   sortOrder: number;
   isActive: boolean;
+  imageKey?: string | null;
 }
 
 interface GalleryManagerProps {
@@ -29,6 +30,7 @@ const emptyItem = {
   alt: { en: '', fr: '' },
   sortOrder: 0,
   isActive: true,
+  imageKey: null as string | null,
 };
 
 export default function GalleryManager({ items: initialItems }: GalleryManagerProps) {
@@ -37,10 +39,14 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
   const [items, setItems] = useState(initialItems);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyItem);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const resetForm = () => {
     setEditingId(null);
     setForm(emptyItem);
+    setUploadError(null);
   };
 
   const startEdit = (item: GalleryRow) => {
@@ -50,11 +56,52 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
       alt: item.alt,
       sortOrder: item.sortOrder,
       isActive: item.isActive,
+      imageKey: item.imageKey ?? null,
     });
+    setUploadError(null);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, folder: 'gallery' }),
+      });
+
+      if (!res.ok) throw new Error('Failed to get upload URL');
+      const { data } = await res.json();
+
+      const uploadRes = await fetch(data.presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+
+      if (!uploadRes.ok) throw new Error('Upload to R2 failed');
+
+      setForm((f) => ({ ...f, url: data.publicUrl, imageKey: data.key }));
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!form.url) {
+      setUploadError('Please upload an image before saving.');
+      return;
+    }
 
     try {
       if (editingId) {
@@ -103,6 +150,7 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
                 <p className="text-sm text-ink">{item.alt.en}</p>
                 <p className="text-xs text-ink-faint">
                   Order {item.sortOrder} · {item.isActive ? 'Active' : 'Hidden'}
+                  {item.imageKey ? ' · R2' : ''}
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <AdminButton type="button" variant="secondary" onClick={() => startEdit(item)}>
@@ -123,15 +171,31 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
           {editingId ? 'Edit image' : 'Add image'}
         </h3>
 
+        {/* R2 upload — only source for gallery images */}
         <div>
-          <label className={labelClass}>Image URL</label>
-          <input
-            className={inputClass}
-            value={form.url}
-            onChange={(e) => setForm({ ...form, url: e.target.value })}
-            placeholder="/images/gallery-atlas.png"
-            required
-          />
+          <label className={labelClass}>Image</label>
+          <div className="border-2 border-dashed border-rule/40 p-4 text-center">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={handleFileUpload}
+              disabled={uploading}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="font-syne text-[10px] tracking-wider uppercase px-4 py-2 border border-rule/40 text-ink-muted hover:border-gold hover:text-gold transition-colors disabled:opacity-50"
+            >
+              {uploading ? 'Uploading...' : '+ Choose file'}
+            </button>
+            {form.url && form.imageKey && (
+              <p className="text-xs text-green-400 mt-2 truncate">✓ {form.url.split('/').pop()}</p>
+            )}
+            {uploadError && <p className="text-xs text-red-400 mt-2">{uploadError}</p>}
+          </div>
         </div>
 
         <LocalizedField
@@ -163,7 +227,7 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
         </label>
 
         <div className="flex flex-wrap items-center gap-3">
-          <AdminButton type="submit" disabled={loading}>
+          <AdminButton type="submit" disabled={loading || uploading}>
             {loading ? 'Saving...' : editingId ? 'Update image' : 'Add image'}
           </AdminButton>
           {editingId ? (

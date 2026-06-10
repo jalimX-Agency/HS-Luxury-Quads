@@ -21,6 +21,9 @@ export interface Tour {
     display: LocalizedString;
   };
   duration: LocalizedString;
+  images?: string[];
+  viatorUrl?: string | null;
+  whatsappMsg?: string | null;
 }
 
 export const tours: Tour[] = [
