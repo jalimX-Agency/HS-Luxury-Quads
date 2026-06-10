@@ -13,6 +13,22 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum UserRole {
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
 model Tour {
   id               String    @id @default(cuid())
   slug             String    @unique

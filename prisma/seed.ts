@@ -1,8 +1,9 @@
-import 'dotenv/config';
+import '../lib/load-env';
 import { PrismaPg } from '@prisma/adapter-pg';
 import type { Prisma } from '../generated/client';
 import { PrismaClient } from '../generated/client';
 import { tours } from '../content/tours';
+import { hashPassword } from '../lib/password';
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -103,8 +104,26 @@ const reviewSeed = [
   },
 ];
 
+const ADMIN_EMAIL = 'luxuryquadadventure@gmail.com';
+const ADMIN_DEFAULT_PASSWORD = '123456';
+
 async function main() {
   console.log('Seeding database...');
+
+  const passwordHash = await hashPassword(ADMIN_DEFAULT_PASSWORD);
+
+  await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    update: {},
+    create: {
+      email: ADMIN_EMAIL,
+      passwordHash,
+      name: 'HS Luxury Quads Admin',
+      role: 'ADMIN',
+    },
+  });
+
+  console.log(`Admin user ready: ${ADMIN_EMAIL}`);
 
   for (const tour of tours) {
     await prisma.tour.upsert({

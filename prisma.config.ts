@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import './lib/load-env';
 import { defineConfig } from 'prisma/config';
 
 // Fallback allows `prisma generate` in CI before runtime secrets are available.

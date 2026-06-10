@@ -1,3 +1,4 @@
+import type { Tour as ContentTour } from '@/content/tours';
 import type { Tour as PrismaTour } from '@/generated/client';
 
 type LocalizedString = { en: string; fr: string };
@@ -48,6 +49,23 @@ function asFaqs(value: unknown) {
       answer: asLocalizedString(faq.answer),
     };
   });
+}
+
+export function toTour(api: ApiTour): ContentTour {
+  return {
+    slug: api.slug,
+    title: api.title,
+    shortDescription: api.shortDescription,
+    fullDescription: api.fullDescription,
+    includes: api.includes,
+    highlights: api.highlights,
+    faqs: api.faqs,
+    price: {
+      ...api.price,
+      currency: api.price.currency as 'EUR',
+    },
+    duration: api.duration,
+  };
 }
 
 export function serializeTour(tour: PrismaTour): ApiTour {

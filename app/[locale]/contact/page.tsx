@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { tours } from '@/content/tours';
 import { contactContent } from '@/content/ui';
 import { seoConfig } from '@/content/seo';
+import { getTours } from '@/lib/api-client';
+import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingForm from '@/components/booking/BookingForm';
@@ -25,13 +26,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function ContactPage({ params }: PageProps) {
+export default async function ContactPage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
 
   if (locale !== 'en' && locale !== 'fr') {
     notFound();
   }
 
+  const apiTours = await getTours();
+  const tours = apiTours.map(toTour);
   const content = contactContent;
 
   return (
@@ -40,7 +43,6 @@ export default function ContactPage({ params }: PageProps) {
 
       <main className="min-h-screen pt-32 pb-16">
         <div className="max-w-container-max mx-auto px-gutter">
-          {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16 animate-fadeIn">
             <span className="text-primary font-accent text-lg italic block mb-3">
               {locale === 'en' ? 'Bespoke Booking' : 'Réservation Privée'}
@@ -53,7 +55,6 @@ export default function ContactPage({ params }: PageProps) {
             </p>
           </div>
 
-          {/* Form */}
           <div className="max-w-3xl mx-auto">
             <BookingForm locale={locale} toursList={tours} />
           </div>

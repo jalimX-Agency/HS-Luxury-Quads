@@ -8,7 +8,7 @@ export interface TourFaq {
 }
 
 export interface Tour {
-  slug: 'quad-agafay-2h' | 'quad-sunset-dinner' | 'private-luxury-quad';
+  slug: string;
   title: LocalizedString;
   shortDescription: LocalizedString;
   fullDescription: LocalizedString;
