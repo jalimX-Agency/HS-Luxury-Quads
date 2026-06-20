@@ -195,6 +195,27 @@ export default function Navbar({ locale }: NavbarProps) {
         </div>
       </div>
 
+      {/* ── Mobile: theme + WhatsApp floating just above the tab bar ── */}
+      <button
+        onClick={toggleTheme}
+        suppressHydrationWarning
+        className="md:hidden fixed bottom-24 left-4 z-50 w-10 h-10 flex items-center justify-center rounded-full border border-rule/40 bg-background/90 backdrop-blur-sm text-ink-muted hover:border-gold hover:text-gold shadow-lg transition-all duration-200"
+        aria-label="Toggle theme"
+      >
+        {mounted ? themeIcon : <span className="w-5 h-5" />}
+      </button>
+      <a
+        href="https://wa.me/212634857515"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="md:hidden fixed bottom-24 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl hover:scale-110 transition-transform duration-200"
+        aria-label="WhatsApp"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.56 4.13 1.54 5.88L0 24l6.31-1.66A11.95 11.95 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.27-6.14-3.48-8.52zM12 22c-1.97 0-3.88-.53-5.55-1.44l-.4-.23-3.75 1 1-3.65-.24-.42A9.93 9.93 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.25-7.5c-.28-.14-1.66-.82-1.92-.91-.26-.1-.45-.14-.64.14-.19.28-.73.91-.9 1.09-.17.18-.34.2-.62.07-.28-.14-1.18-.44-2.24-1.38-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.13.28-.34.42-.51.14-.17.19-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.64-1.55-.88-2.12-.23-.55-.46-.47-.64-.48-.17-.01-.36-.01-.55-.01-.19 0-.5.07-.76.35-.26.28-1 1-1 2.44 0 1.44 1.05 2.84 1.2 3.03.14.19 2.07 3.15 5.02 4.41.7.3 1.24.48 1.67.61.7.22 1.34.19 1.85.12.56-.08 1.66-.68 1.89-1.34.23-.66.23-1.23.16-1.34-.07-.12-.26-.19-.54-.34z" />
+        </svg>
+      </a>
+
       {/* ── Mobile Bottom Tab Bar ── */}
       <nav className="md:hidden fixed bottom-0 w-full z-50 bg-bg-subtle/95 backdrop-blur-lg border-t border-rule/20 shadow-xl pb-safe">
         <div className="flex justify-around items-center p-4">
@@ -246,22 +267,22 @@ export default function Navbar({ locale }: NavbarProps) {
         </div>
       </nav>
 
-      {/* ── Fixed Bottom-Left: Theme Toggle ── */}
+      {/* ── Desktop-only: Theme Toggle (hidden on mobile) ── */}
       <button
         onClick={toggleTheme}
-        className="fixed bottom-6 left-6 z-50 w-11 h-11 rounded-full border border-rule/40 bg-background/90 backdrop-blur-sm flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold shadow-lg transition-all duration-200"
+        className="hidden md:flex fixed bottom-6 left-6 z-50 w-11 h-11 rounded-full border border-rule/40 bg-background/90 backdrop-blur-sm items-center justify-center text-ink-muted hover:border-gold hover:text-gold shadow-lg transition-all duration-200"
         aria-label="Toggle theme"
         suppressHydrationWarning
       >
         {mounted ? themeIcon : <span className="w-5 h-5" />}
       </button>
 
-      {/* ── Fixed Bottom-Right: WhatsApp Button ── */}
+      {/* ── Desktop-only: WhatsApp Button (hidden on mobile) ── */}
       <a
         href="https://wa.me/212634857515"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-200"
+        className="hidden md:flex fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#25D366] items-center justify-center shadow-xl hover:scale-110 transition-transform duration-200"
         aria-label="Contact on WhatsApp"
       >
         <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
