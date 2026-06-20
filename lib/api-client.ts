@@ -18,6 +18,7 @@ export interface ApiGalleryItem {
   id: string;
   url: string;
   alt: LocalizedString;
+  category: string;
   sortOrder: number;
 }
 

@@ -1,26 +1,22 @@
 import AdminShell from '@/components/admin/AdminShell';
-import ChangePasswordForm from '@/components/admin/ChangePasswordForm';
+import SettingsTabs from '@/components/admin/SettingsTabs';
 import { getAdminSession } from '@/lib/admin-auth';
+import { prisma } from '@/lib/prisma';
 
 export default async function AdminSettingsPage() {
   const session = await getAdminSession();
 
+  const mediaRows = await prisma.siteSettings.findMany({
+    where: { key: { in: ['hero_image_url', 'hero_image_key', 'hero_video_url', 'hero_video_key'] } },
+  });
+  const mediaSettings = Object.fromEntries(mediaRows.map((r) => [r.key, r.value]));
+
   return (
     <AdminShell
-      title="Account settings"
-      description="Manage your admin account and security."
+      title="Settings"
+      description="Manage your account, security, and site media assets."
     >
-      <div className="space-y-8">
-        <div className="border border-rule/30 bg-bg-subtle p-6 max-w-lg">
-          <p className="font-syne text-[10px] uppercase tracking-widest text-ink-faint">Signed in as</p>
-          <p className="text-ink mt-2">{session?.email}</p>
-        </div>
-
-        <div>
-          <h3 className="font-display text-2xl text-ink mb-4">Change password</h3>
-          <ChangePasswordForm />
-        </div>
-      </div>
+      <SettingsTabs email={session?.email ?? ''} mediaSettings={mediaSettings} />
     </AdminShell>
   );
 }

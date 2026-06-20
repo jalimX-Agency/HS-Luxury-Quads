@@ -9,6 +9,7 @@ import {
   DescriptionsSection,
   DetailsSection,
   FaqsSection,
+  LinksSection,
   TourReviewSummary,
 } from '@/components/admin/tour/TourFormSections';
 import { emptyTour, type TourFormState } from '@/components/admin/tour/types';
@@ -20,6 +21,7 @@ const steps = [
   { id: 'content', label: 'Content', description: 'Short and full descriptions' },
   { id: 'details', label: 'Details', description: 'Includes and highlights' },
   { id: 'faqs', label: 'FAQs', description: 'Common guest questions' },
+  { id: 'links', label: 'Links & Media', description: 'Viator URL, WhatsApp message, images' },
   { id: 'review', label: 'Review', description: 'Confirm and create' },
 ] as const;
 
@@ -125,6 +127,7 @@ export default function TourWizardForm() {
         {currentStep.id === 'content' ? <DescriptionsSection form={form} setForm={setForm} /> : null}
         {currentStep.id === 'details' ? <DetailsSection form={form} setForm={setForm} /> : null}
         {currentStep.id === 'faqs' ? <FaqsSection form={form} setForm={setForm} /> : null}
+        {currentStep.id === 'links' ? <LinksSection form={form} setForm={setForm} /> : null}
         {currentStep.id === 'review' ? <TourReviewSummary form={form} /> : null}
       </div>
 

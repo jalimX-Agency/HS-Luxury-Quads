@@ -8,8 +8,11 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/User'
 export type * from './models/Tour'
 export type * from './models/Booking'
 export type * from './models/Review'
+export type * from './models/SiteSettings'
 export type * from './models/Gallery'
+export type * from './models/BlogPost'
 export type * from './commonInputTypes'

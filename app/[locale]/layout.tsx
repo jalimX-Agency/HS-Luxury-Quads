@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans, Cormorant_Garamond, Syne } from 'next/font/g
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import type { Locale } from '@/content/tours';
+import { seoConfig } from '@/content/seo';
 import AnalyticsTracker from '@/components/layout/AnalyticsTracker';
 import '../globals.css';
 
@@ -59,19 +60,20 @@ export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
   }
 
   return (
-    <html lang={locale} className="scroll-smooth" data-theme="dark">
+    <html lang={locale} className="scroll-smooth" data-theme="light">
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var saved = localStorage.getItem('hs-theme');
-                var theme = saved || 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
-              })();
-            `,
+            __html: `(function(){var s=localStorage.getItem('hs-theme');document.documentElement.setAttribute('data-theme',s||'light');})();`,
           }}
         />
+        {seoConfig.home.jsonLd.map((schema, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
       </head>
       <body
         className={`${dmSans.variable} ${playfair.variable} ${cormorant.variable} ${syne.variable} bg-background text-ink font-sans antialiased overflow-x-hidden pb-24 md:pb-0`}

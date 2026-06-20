@@ -39,6 +39,8 @@ export type TourMinAggregateOutputType = {
   slug: string | null
   priceAmount: number | null
   priceCurrency: string | null
+  viatorUrl: string | null
+  whatsappMsg: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +51,8 @@ export type TourMaxAggregateOutputType = {
   slug: string | null
   priceAmount: number | null
   priceCurrency: string | null
+  viatorUrl: string | null
+  whatsappMsg: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -67,6 +71,10 @@ export type TourCountAggregateOutputType = {
   priceCurrency: number
   priceDisplay: number
   duration: number
+  images: number
+  imageKeys: number
+  viatorUrl: number
+  whatsappMsg: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -87,6 +95,8 @@ export type TourMinAggregateInputType = {
   slug?: true
   priceAmount?: true
   priceCurrency?: true
+  viatorUrl?: true
+  whatsappMsg?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -97,6 +107,8 @@ export type TourMaxAggregateInputType = {
   slug?: true
   priceAmount?: true
   priceCurrency?: true
+  viatorUrl?: true
+  whatsappMsg?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -115,6 +127,10 @@ export type TourCountAggregateInputType = {
   priceCurrency?: true
   priceDisplay?: true
   duration?: true
+  images?: true
+  imageKeys?: true
+  viatorUrl?: true
+  whatsappMsg?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -220,6 +236,10 @@ export type TourGroupByOutputType = {
   priceCurrency: string
   priceDisplay: runtime.JsonValue
   duration: runtime.JsonValue
+  images: string[]
+  imageKeys: string[]
+  viatorUrl: string | null
+  whatsappMsg: string | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -261,6 +281,10 @@ export type TourWhereInput = {
   priceCurrency?: Prisma.StringFilter<"Tour"> | string
   priceDisplay?: Prisma.JsonFilter<"Tour">
   duration?: Prisma.JsonFilter<"Tour">
+  images?: Prisma.StringNullableListFilter<"Tour">
+  imageKeys?: Prisma.StringNullableListFilter<"Tour">
+  viatorUrl?: Prisma.StringNullableFilter<"Tour"> | string | null
+  whatsappMsg?: Prisma.StringNullableFilter<"Tour"> | string | null
   isActive?: Prisma.BoolFilter<"Tour"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tour"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tour"> | Date | string
@@ -281,6 +305,10 @@ export type TourOrderByWithRelationInput = {
   priceCurrency?: Prisma.SortOrder
   priceDisplay?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  images?: Prisma.SortOrder
+  imageKeys?: Prisma.SortOrder
+  viatorUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  whatsappMsg?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -304,6 +332,10 @@ export type TourWhereUniqueInput = Prisma.AtLeast<{
   priceCurrency?: Prisma.StringFilter<"Tour"> | string
   priceDisplay?: Prisma.JsonFilter<"Tour">
   duration?: Prisma.JsonFilter<"Tour">
+  images?: Prisma.StringNullableListFilter<"Tour">
+  imageKeys?: Prisma.StringNullableListFilter<"Tour">
+  viatorUrl?: Prisma.StringNullableFilter<"Tour"> | string | null
+  whatsappMsg?: Prisma.StringNullableFilter<"Tour"> | string | null
   isActive?: Prisma.BoolFilter<"Tour"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tour"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tour"> | Date | string
@@ -324,6 +356,10 @@ export type TourOrderByWithAggregationInput = {
   priceCurrency?: Prisma.SortOrder
   priceDisplay?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  images?: Prisma.SortOrder
+  imageKeys?: Prisma.SortOrder
+  viatorUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  whatsappMsg?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -350,6 +386,10 @@ export type TourScalarWhereWithAggregatesInput = {
   priceCurrency?: Prisma.StringWithAggregatesFilter<"Tour"> | string
   priceDisplay?: Prisma.JsonWithAggregatesFilter<"Tour">
   duration?: Prisma.JsonWithAggregatesFilter<"Tour">
+  images?: Prisma.StringNullableListFilter<"Tour">
+  imageKeys?: Prisma.StringNullableListFilter<"Tour">
+  viatorUrl?: Prisma.StringNullableWithAggregatesFilter<"Tour"> | string | null
+  whatsappMsg?: Prisma.StringNullableWithAggregatesFilter<"Tour"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Tour"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tour"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Tour"> | Date | string
@@ -368,6 +408,10 @@ export type TourCreateInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -388,6 +432,10 @@ export type TourUncheckedCreateInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -408,6 +456,10 @@ export type TourUpdateInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,6 +480,10 @@ export type TourUncheckedUpdateInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -448,6 +504,10 @@ export type TourCreateManyInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -466,6 +526,10 @@ export type TourUpdateManyMutationInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -484,9 +548,21 @@ export type TourUncheckedUpdateManyInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type TourCountOrderByAggregateInput = {
@@ -502,6 +578,10 @@ export type TourCountOrderByAggregateInput = {
   priceCurrency?: Prisma.SortOrder
   priceDisplay?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  images?: Prisma.SortOrder
+  imageKeys?: Prisma.SortOrder
+  viatorUrl?: Prisma.SortOrder
+  whatsappMsg?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -516,6 +596,8 @@ export type TourMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   priceAmount?: Prisma.SortOrder
   priceCurrency?: Prisma.SortOrder
+  viatorUrl?: Prisma.SortOrder
+  whatsappMsg?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -526,6 +608,8 @@ export type TourMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   priceAmount?: Prisma.SortOrder
   priceCurrency?: Prisma.SortOrder
+  viatorUrl?: Prisma.SortOrder
+  whatsappMsg?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -545,8 +629,12 @@ export type TourNullableScalarRelationFilter = {
   isNot?: Prisma.TourWhereInput | null
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type TourCreateimagesInput = {
+  set: string[]
+}
+
+export type TourCreateimageKeysInput = {
+  set: string[]
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -557,12 +645,18 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type TourUpdateimagesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type TourUpdateimageKeysInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type TourCreateNestedOneWithoutBookingsInput = {
@@ -608,6 +702,10 @@ export type TourCreateWithoutBookingsInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -627,6 +725,10 @@ export type TourUncheckedCreateWithoutBookingsInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -662,6 +764,10 @@ export type TourUpdateWithoutBookingsInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -681,6 +787,10 @@ export type TourUncheckedUpdateWithoutBookingsInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,6 +810,10 @@ export type TourCreateWithoutReviewsInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -719,6 +833,10 @@ export type TourUncheckedCreateWithoutReviewsInput = {
   priceCurrency?: string
   priceDisplay: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourCreateimagesInput | string[]
+  imageKeys?: Prisma.TourCreateimageKeysInput | string[]
+  viatorUrl?: string | null
+  whatsappMsg?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -754,6 +872,10 @@ export type TourUpdateWithoutReviewsInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -773,6 +895,10 @@ export type TourUncheckedUpdateWithoutReviewsInput = {
   priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   priceDisplay?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   duration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  images?: Prisma.TourUpdateimagesInput | string[]
+  imageKeys?: Prisma.TourUpdateimageKeysInput | string[]
+  viatorUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappMsg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -832,6 +958,10 @@ export type TourSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   priceCurrency?: boolean
   priceDisplay?: boolean
   duration?: boolean
+  images?: boolean
+  imageKeys?: boolean
+  viatorUrl?: boolean
+  whatsappMsg?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -853,6 +983,10 @@ export type TourSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   priceCurrency?: boolean
   priceDisplay?: boolean
   duration?: boolean
+  images?: boolean
+  imageKeys?: boolean
+  viatorUrl?: boolean
+  whatsappMsg?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -871,6 +1005,10 @@ export type TourSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   priceCurrency?: boolean
   priceDisplay?: boolean
   duration?: boolean
+  images?: boolean
+  imageKeys?: boolean
+  viatorUrl?: boolean
+  whatsappMsg?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -889,12 +1027,16 @@ export type TourSelectScalar = {
   priceCurrency?: boolean
   priceDisplay?: boolean
   duration?: boolean
+  images?: boolean
+  imageKeys?: boolean
+  viatorUrl?: boolean
+  whatsappMsg?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TourOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "shortDescription" | "fullDescription" | "includes" | "highlights" | "faqs" | "priceAmount" | "priceCurrency" | "priceDisplay" | "duration" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tour"]>
+export type TourOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "shortDescription" | "fullDescription" | "includes" | "highlights" | "faqs" | "priceAmount" | "priceCurrency" | "priceDisplay" | "duration" | "images" | "imageKeys" | "viatorUrl" | "whatsappMsg" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tour"]>
 export type TourInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bookings?: boolean | Prisma.Tour$bookingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Tour$reviewsArgs<ExtArgs>
@@ -922,6 +1064,10 @@ export type $TourPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     priceCurrency: string
     priceDisplay: runtime.JsonValue
     duration: runtime.JsonValue
+    images: string[]
+    imageKeys: string[]
+    viatorUrl: string | null
+    whatsappMsg: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1362,6 +1508,10 @@ export interface TourFieldRefs {
   readonly priceCurrency: Prisma.FieldRef<"Tour", 'String'>
   readonly priceDisplay: Prisma.FieldRef<"Tour", 'Json'>
   readonly duration: Prisma.FieldRef<"Tour", 'Json'>
+  readonly images: Prisma.FieldRef<"Tour", 'String[]'>
+  readonly imageKeys: Prisma.FieldRef<"Tour", 'String[]'>
+  readonly viatorUrl: Prisma.FieldRef<"Tour", 'String'>
+  readonly whatsappMsg: Prisma.FieldRef<"Tour", 'String'>
   readonly isActive: Prisma.FieldRef<"Tour", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Tour", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Tour", 'DateTime'>

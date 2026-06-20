@@ -13,6 +13,7 @@ export async function GET() {
         id: item.id,
         url: item.url,
         alt: item.alt,
+        category: item.category,
         sortOrder: item.sortOrder,
       })),
     });

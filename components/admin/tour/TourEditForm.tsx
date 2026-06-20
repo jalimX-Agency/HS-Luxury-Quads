@@ -9,6 +9,7 @@ import {
   DescriptionsSection,
   DetailsSection,
   FaqsSection,
+  LinksSection,
 } from '@/components/admin/tour/TourFormSections';
 import { toFormState, type TourFormState } from '@/components/admin/tour/types';
 import type { ApiTour } from '@/lib/tours';
@@ -19,6 +20,7 @@ const tabs = [
   { id: 'content', label: 'Content' },
   { id: 'details', label: 'Details' },
   { id: 'faqs', label: 'FAQs' },
+  { id: 'links', label: 'Links & Media' },
 ] as const;
 
 type TabId = (typeof tabs)[number]['id'];
@@ -75,6 +77,7 @@ export default function TourEditForm({ tour }: TourEditFormProps) {
           {activeTab === 'content' ? <DescriptionsSection form={form} setForm={setForm} /> : null}
           {activeTab === 'details' ? <DetailsSection form={form} setForm={setForm} /> : null}
           {activeTab === 'faqs' ? <FaqsSection form={form} setForm={setForm} /> : null}
+          {activeTab === 'links' ? <LinksSection form={form} setForm={setForm} /> : null}
         </div>
       </div>
 

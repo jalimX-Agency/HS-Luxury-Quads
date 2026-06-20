@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,8 +9,10 @@ import { homepageContent, aboutContent } from '@/content/ui';
 import { seoConfig } from '@/content/seo';
 import { getReviews, getTours } from '@/lib/api-client';
 import { toTour } from '@/lib/tours';
+import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { FadeIn } from '@/components/ui/FadeIn';
 
 interface PageProps {
   params: {
@@ -27,28 +31,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// Locally hosted images — guaranteed to always load
-const IMAGES = {
-  hero:        '/images/hero-agafay.png',
-  tourOne:     '/images/tour-2h.png',
-  tourTwo:     '/images/tour-sunset.png',
-  tourThree:   '/images/tour-private.png',
-  galleryA:    '/images/hero-agafay.png',
-  galleryB:    '/images/tour-2h.png',
-  galleryC:    '/images/gallery-atlas.png',
-  galleryD:    '/images/tour-sunset.png',
-  galleryE:    '/images/gallery-tea.png',
-  cta:         '/images/tour-private.png',
-};
-
-const tourImages = [IMAGES.tourOne, IMAGES.tourTwo, IMAGES.tourThree];
 
 export default async function HomePage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') notFound();
 
-  const [apiTours, apiReviews] = await Promise.all([getTours(), getReviews()]);
+  const [apiTours, apiReviews, mediaRows, galleryItems] = await Promise.all([
+    getTours(),
+    getReviews(),
+    prisma.siteSettings.findMany({
+      where: { key: { in: ['hero_image_url', 'hero_video_url'] } },
+    }),
+    prisma.gallery.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+      take: 5,
+    }),
+  ]);
   const tours = apiTours.map(toTour);
+
+  const media = Object.fromEntries(mediaRows.map((r) => [r.key, r.value]));
+  const heroImageUrl: string | null = media.hero_image_url ?? null;
+  const heroVideoUrl: string | null = media.hero_video_url ?? null;
 
   const content = homepageContent;
   const t = {
@@ -131,18 +135,30 @@ export default async function HomePage({ params }: PageProps) {
       <header className="relative w-full h-[100svh] min-h-[720px] flex items-end overflow-hidden">
         {/* Full-bleed background video — autoplay, muted, loop for cinematic effect */}
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster={IMAGES.hero}
-            preload="none"
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-          >
-            <source src="/videos/hero.mp4" type="video/mp4" />
-          </video>
+          {heroVideoUrl ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={heroImageUrl ?? undefined}
+              preload="none"
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            >
+              <source src={heroVideoUrl} type="video/mp4" />
+            </video>
+          ) : heroImageUrl ? (
+            <Image
+              src={heroImageUrl}
+              alt="Agafay Desert"
+              fill
+              priority
+              className="object-cover object-center"
+            />
+          ) : (
+            <div className="absolute inset-0" style={{ background: 'oklch(8% 0.01 75)' }} />
+          )}
           {/* Cinematic gradient — bottom-heavy for readability */}
           <div
             className="absolute inset-0"
@@ -239,10 +255,7 @@ export default async function HomePage({ params }: PageProps) {
               { stat: '4.9★', label: t.statsLabel3 },
               { stat: '50+', label: t.statsLabel4 },
             ].map((item, i) => (
-              <div
-                key={i}
-                className="text-center md:text-left px-0 md:px-12 first:pl-0 last:pr-0 relative"
-              >
+              <FadeIn key={i} delay={i * 0.1} className="text-center md:text-left px-0 md:px-12 first:pl-0 last:pr-0 relative">
                 {i > 0 && (
                   <div
                     className="absolute left-0 top-0 h-full w-[1px] hidden md:block"
@@ -250,18 +263,15 @@ export default async function HomePage({ params }: PageProps) {
                   />
                 )}
                 <p
-                  className="font-display font-light text-4xl md:text-5xl leading-none mb-2 animate-countUp"
-                  style={{
-                    color: 'oklch(var(--gold))',
-                    animationDelay: `${i * 0.12}s`,
-                  }}
+                  className="font-display font-light text-4xl md:text-5xl leading-none mb-2"
+                  style={{ color: 'oklch(var(--gold))' }}
                 >
                   {item.stat}
                 </p>
                 <p className="font-syne text-[9px] font-medium tracking-[0.22em] uppercase" style={{ color: 'oklch(var(--ink-faint))' }}>
                   {item.label}
                 </p>
-              </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -295,8 +305,8 @@ export default async function HomePage({ params }: PageProps) {
           {/* Tour list — editorial stacked layout */}
           <div className="flex flex-col">
             {tours.map((tour, index) => (
+              <FadeIn key={tour.slug} delay={index * 0.12}>
               <div
-                key={tour.slug}
                 className="tour-list-item group relative"
               >
                 <Link href={`/${locale}/tours/${tour.slug}`}>
@@ -313,13 +323,17 @@ export default async function HomePage({ params }: PageProps) {
 
                     {/* Image — hidden by default, slides in on hover */}
                     <div className="lg:col-span-3 relative h-52 lg:h-44 overflow-hidden mb-6 lg:mb-0">
-                      <Image
-                        alt={tour.title[locale]}
-                        src={tourImages[index]}
-                        fill
-                        className="object-cover tour-card__image filter saturate-[0.85]"
-                        sizes="(max-width: 1024px) 100vw, 25vw"
-                      />
+                      {tour.images?.[0] ? (
+                        <Image
+                          alt={tour.title[locale]}
+                          src={tour.images[0]}
+                          fill
+                          className="object-cover tour-card__image filter saturate-[0.85]"
+                          sizes="(max-width: 1024px) 100vw, 25vw"
+                        />
+                      ) : (
+                        <div className="absolute inset-0" style={{ background: 'oklch(12% 0.03 72)' }} />
+                      )}
                       {/* Duration badge */}
                       <div
                         className="absolute top-3 left-3 font-syne text-[8px] font-bold tracking-widest uppercase px-2.5 py-1"
@@ -389,6 +403,7 @@ export default async function HomePage({ params }: PageProps) {
                   </div>
                 </Link>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -405,7 +420,7 @@ export default async function HomePage({ params }: PageProps) {
         <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
             {/* Left: sticky quote */}
-            <div className="lg:col-span-4 lg:sticky lg:top-32">
+            <FadeIn direction="left" className="lg:col-span-4 lg:sticky lg:top-32">
               <p className="section-label mb-8">{t.philosophyLabel}</p>
               <blockquote
                 className="font-display italic font-light text-2xl lg:text-[1.6rem] leading-[1.4]"
@@ -417,10 +432,10 @@ export default async function HomePage({ params }: PageProps) {
               >
                 {t.quoteText}
               </blockquote>
-            </div>
+            </FadeIn>
 
             {/* Right: story + values */}
-            <div className="lg:col-span-8">
+            <FadeIn direction="right" className="lg:col-span-8">
               <p
                 className="font-sans font-light text-base leading-[1.9] mb-16"
                 style={{ color: 'oklch(var(--ink-muted))' }}
@@ -460,7 +475,7 @@ export default async function HomePage({ params }: PageProps) {
                   </div>
                 ))}
               </div>
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -472,63 +487,43 @@ export default async function HomePage({ params }: PageProps) {
         <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 mb-10">
           <p className="section-label">{t.galleryLabel}</p>
         </div>
-        {/* Full-width gallery with no side padding */}
-        <div className="grid grid-cols-12 grid-rows-2 gap-1" style={{ height: 'clamp(400px, 55vw, 700px)' }}>
-          {/* Tall left column */}
-          <div className="col-span-5 row-span-2 gallery-item relative">
-            <Image
-              alt="Quad biking Agafay desert dunes"
-              src={IMAGES.galleryA}
-              fill
-              className="object-cover filter saturate-[0.8]"
-              sizes="42vw"
-            />
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ background: 'oklch(8% 0.01 75 / 0.2)' }}
-            />
+        {galleryItems.length > 0 ? (
+          <div className="grid grid-cols-12 grid-rows-2 gap-1" style={{ height: 'clamp(400px, 55vw, 700px)' }}>
+            <div className="col-span-5 row-span-2 gallery-item relative">
+              <Image
+                alt={(galleryItems[0]?.alt as { en: string })?.en ?? ''}
+                src={galleryItems[0]!.url}
+                fill
+                className="object-cover filter saturate-[0.8]"
+                sizes="42vw"
+              />
+            </div>
+            {galleryItems[1] && (
+              <div className="col-span-4 row-span-1 gallery-item relative">
+                <Image alt={(galleryItems[1].alt as { en: string })?.en ?? ''} src={galleryItems[1].url} fill className="object-cover filter saturate-[0.8]" sizes="33vw" />
+              </div>
+            )}
+            {galleryItems[2] && (
+              <div className="col-span-3 row-span-1 gallery-item relative">
+                <Image alt={(galleryItems[2].alt as { en: string })?.en ?? ''} src={galleryItems[2].url} fill className="object-cover filter saturate-[0.8]" sizes="25vw" />
+              </div>
+            )}
+            {galleryItems[3] && (
+              <div className="col-span-4 row-span-1 gallery-item relative">
+                <Image alt={(galleryItems[3].alt as { en: string })?.en ?? ''} src={galleryItems[3].url} fill className="object-cover filter saturate-[0.8]" sizes="33vw" />
+              </div>
+            )}
+            {galleryItems[4] && (
+              <div className="col-span-3 row-span-1 gallery-item relative">
+                <Image alt={(galleryItems[4].alt as { en: string })?.en ?? ''} src={galleryItems[4].url} fill className="object-cover filter saturate-[0.8]" sizes="25vw" />
+              </div>
+            )}
           </div>
-          {/* Top middle */}
-          <div className="col-span-4 row-span-1 gallery-item relative">
-            <Image
-              alt="Agafay sunset desert tracks"
-              src={IMAGES.galleryB}
-              fill
-              className="object-cover filter saturate-[0.8]"
-              sizes="33vw"
-            />
+        ) : (
+          <div className="h-64 flex items-center justify-center border border-dashed border-rule/30">
+            <p className="text-xs text-ink-faint">Gallery images will appear here once uploaded.</p>
           </div>
-          {/* Top right */}
-          <div className="col-span-3 row-span-1 gallery-item relative">
-            <Image
-              alt="Atlas mountains panorama from Agafay"
-              src={IMAGES.galleryC}
-              fill
-              className="object-cover filter saturate-[0.8]"
-              sizes="25vw"
-            />
-          </div>
-          {/* Bottom middle */}
-          <div className="col-span-4 row-span-1 gallery-item relative">
-            <Image
-              alt="Luxury desert camp experience"
-              src={IMAGES.galleryD}
-              fill
-              className="object-cover filter saturate-[0.8]"
-              sizes="33vw"
-            />
-          </div>
-          {/* Bottom right */}
-          <div className="col-span-3 row-span-1 gallery-item relative">
-            <Image
-              alt="Traditional Moroccan mint tea in desert"
-              src={IMAGES.galleryE}
-              fill
-              className="object-cover filter saturate-[0.8]"
-              sizes="25vw"
-            />
-          </div>
-        </div>
+        )}
       </section>
 
       {/* ═══════════════════════════════════════════════════════
@@ -542,7 +537,7 @@ export default async function HomePage({ params }: PageProps) {
           <p className="section-label mb-16">{t.reviewsLabel}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
             {displayedReviews.map((review, i) => (
-              <div key={i} className="review-card">
+              <FadeIn key={i} delay={i * 0.12} className="review-card">
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-5">
                   {[...Array(5)].map((_, s) => (
@@ -565,8 +560,137 @@ export default async function HomePage({ params }: PageProps) {
                     {review.origin} · {review.tour}
                   </p>
                 </div>
-              </div>
+              </FadeIn>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SOCIAL MEDIA — Follow our adventures
+      ═══════════════════════════════════════════════════════ */}
+      <section
+        className="py-28 border-t"
+        style={{ borderColor: 'oklch(var(--rule) / 0.15)' }}
+        id="social"
+      >
+        <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
+          <div className="mb-12">
+            <p className="section-label mb-5">
+              {locale === 'en' ? 'Follow Our Adventures' : 'Suivez Nos Aventures'}
+            </p>
+            <h2
+              className="font-display font-light italic text-[clamp(1.8rem,3.5vw,2.8rem)] leading-[1.1] mb-3"
+              style={{ color: 'oklch(var(--ink))' }}
+            >
+              {locale === 'en' ? 'See The Desert Come Alive' : 'Voyez le Désert Prendre Vie'}
+            </h2>
+            <p className="font-sans font-light text-sm" style={{ color: 'oklch(var(--ink-muted))' }}>
+              {locale === 'en'
+                ? 'Join thousands of adventurers sharing their Agafay experience'
+                : 'Rejoignez des milliers d\'aventuriers partageant leur expérience à Agafay'}
+            </p>
+          </div>
+
+          {/* 6 placeholder cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
+            {[
+              'from oklch(15% 0.03 75) to oklch(10% 0.02 60)',
+              'from oklch(12% 0.04 72) to oklch(18% 0.02 80)',
+              'from oklch(16% 0.02 65) to oklch(11% 0.03 70)',
+              'from oklch(11% 0.03 68) to oklch(16% 0.02 75)',
+              'from oklch(14% 0.04 70) to oklch(10% 0.02 65)',
+              'from oklch(13% 0.02 72) to oklch(17% 0.03 68)',
+            ].map((gradient, i) => (
+              <a
+                key={i}
+                href={process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/luxury_quads_morrocco'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative aspect-square rounded-lg overflow-hidden"
+                style={{ background: `linear-gradient(135deg, ${gradient})` }}
+              >
+                {/* Desert texture overlay */}
+                <div
+                  className="absolute inset-0 opacity-30"
+                  style={{
+                    backgroundImage: `radial-gradient(circle at ${20 + i * 15}% ${30 + i * 10}%, oklch(74% 0.130 72 / 0.15) 0%, transparent 60%)`,
+                  }}
+                />
+                {/* Gold geometric accent */}
+                <div
+                  className="absolute bottom-4 right-4 w-8 h-8 opacity-20"
+                  style={{ border: '1px solid oklch(74% 0.130 72)', borderRadius: '2px', transform: 'rotate(45deg)' }}
+                />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2">
+                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                  <span className="font-syne text-[9px] font-semibold tracking-[0.15em] uppercase text-white/80">
+                    {locale === 'en' ? 'View on Instagram' : 'Voir sur Instagram'}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          {/* Social follow buttons */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            {/* Instagram */}
+            <a
+              href={process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/luxury_quads_morrocco'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 font-syne font-semibold text-[10px] tracking-[0.15em] uppercase transition-all duration-300 hover:opacity-80"
+              style={{
+                border: '1px solid transparent',
+                borderRadius: '999px',
+                background: 'linear-gradient(oklch(var(--background)), oklch(var(--background))) padding-box, linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) border-box',
+                color: 'oklch(var(--ink))',
+              }}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+              Instagram
+            </a>
+
+            {/* TikTok */}
+            <a
+              href={process.env.NEXT_PUBLIC_TIKTOK_URL ?? 'https://www.tiktok.com/@hsquadsluxurymorocco'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 font-syne font-semibold text-[10px] tracking-[0.15em] uppercase transition-all duration-300 hover:opacity-80"
+              style={{
+                border: '1px solid oklch(var(--rule) / 0.4)',
+                borderRadius: '999px',
+                color: 'oklch(var(--ink))',
+              }}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.25 8.25 0 004.82 1.56V6.86a4.85 4.85 0 01-1.05-.17z" />
+              </svg>
+              TikTok
+            </a>
+
+            {/* Facebook */}
+            <a
+              href={process.env.NEXT_PUBLIC_FACEBOOK_URL ?? 'https://www.facebook.com/share/1BeADmBxvj/'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 font-syne font-semibold text-[10px] tracking-[0.15em] uppercase transition-all duration-300 hover:opacity-80"
+              style={{
+                border: '1px solid #1877F2',
+                borderRadius: '999px',
+                color: '#1877F2',
+              }}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+              Facebook
+            </a>
           </div>
         </div>
       </section>
@@ -577,13 +701,15 @@ export default async function HomePage({ params }: PageProps) {
       <section className="relative overflow-hidden" style={{ height: 'clamp(500px, 60vw, 780px)' }} id="contact">
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <Image
-            alt="Agafay desert sunset panorama"
-            src={IMAGES.cta}
-            fill
-            className="object-cover filter saturate-[0.6]"
-            sizes="100vw"
-          />
+          {heroImageUrl && (
+            <Image
+              alt="Agafay desert sunset panorama"
+              src={heroImageUrl}
+              fill
+              className="object-cover filter saturate-[0.6]"
+              sizes="100vw"
+            />
+          )}
           <div
             className="absolute inset-0"
             style={{ background: 'oklch(8% 0.01 75 / 0.72)' }}
@@ -600,7 +726,7 @@ export default async function HomePage({ params }: PageProps) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 md:px-16">
+        <FadeIn className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 md:px-16">
           <p className="section-label justify-center mb-8 text-white/60">
             {t.ctaLabel}
           </p>
@@ -622,7 +748,7 @@ export default async function HomePage({ params }: PageProps) {
               <span>{t.enquiry}</span>
             </Link>
             <a
-              href="https://wa.me/+212600000000"
+              href="https://wa.me/212634857515"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline inline-flex items-center justify-center gap-2.5"
@@ -633,7 +759,7 @@ export default async function HomePage({ params }: PageProps) {
               {t.whatsapp}
             </a>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       <Footer locale={locale} />

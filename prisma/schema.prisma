@@ -42,6 +42,10 @@ model Tour {
   priceCurrency    String    @default("EUR")
   priceDisplay     Json
   duration         Json
+  images           String[]  @default([])
+  imageKeys        String[]  @default([])
+  viatorUrl        String?
+  whatsappMsg      String?
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -93,10 +97,18 @@ model Review {
   @@index([isPublished])
 }
 
+model SiteSettings {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model Gallery {
   id        String   @id @default(cuid())
   url       String
   alt       Json
+  imageKey  String?
+  category  String   @default("all")
   sortOrder Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -104,4 +116,25 @@ model Gallery {
 
   @@index([sortOrder])
   @@index([isActive])
+  @@index([category])
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       Json
+  excerpt     Json
+  content     Json
+  image       String    @default("")
+  imageKey    String?
+  category    String    @default("")
+  author      String    @default("HS Luxury Quads")
+  featured    Boolean   @default(false)
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([slug])
 }

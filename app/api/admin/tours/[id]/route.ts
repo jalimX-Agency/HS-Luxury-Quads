@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { toFormState } from '@/components/admin/tour/types';
 import { requireAdmin } from '@/lib/admin-api';
 import { handleApiError, jsonError, jsonSuccess } from '@/lib/api-response';
+import { deleteR2Object } from '@/lib/r2';
 import { normalizeTourForUpdate } from '@/lib/normalize-tour';
 import { prisma } from '@/lib/prisma';
 import { serializeTour } from '@/lib/tours';
@@ -46,6 +47,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const data = normalizeTourForUpdate(toFormState(serializeTour(existing)), body);
 
+    // Delete R2 objects for any image keys that were removed
+    const incomingKeys = new Set(data.imageKeys ?? []);
+    const removedKeys = existing.imageKeys.filter((k) => !incomingKeys.has(k));
+    await Promise.all(removedKeys.map((k) => deleteR2Object(k).catch(() => {})));
+
     const tour = await prisma.tour.update({
       where: { id: params.id },
       data: {
@@ -61,6 +67,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         priceDisplay: data.priceDisplay,
         duration: data.duration,
         isActive: data.isActive,
+        viatorUrl: data.viatorUrl || null,
+        whatsappMsg: data.whatsappMsg || null,
+        images: data.images ?? [],
+        imageKeys: data.imageKeys ?? [],
       },
     });
 
@@ -80,6 +90,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (bookingsCount > 0) {
       return jsonError('Cannot delete a tour with existing bookings. Deactivate it instead.', 409);
     }
+
+    const tour = await prisma.tour.findUnique({ where: { id: params.id } });
+    await Promise.all((tour?.imageKeys ?? []).map((k) => deleteR2Object(k).catch(() => {})));
 
     await prisma.tour.delete({ where: { id: params.id } });
     return jsonSuccess({ message: 'Tour deleted' });
