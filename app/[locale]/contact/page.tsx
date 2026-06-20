@@ -1,14 +1,13 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Mail, MapPin, Clock, Globe } from 'lucide-react';
 import type { Locale } from '@/content/tours';
 import { contactContent } from '@/content/ui';
 import { seoConfig } from '@/content/seo';
-import { getTours } from '@/lib/api-client';
-import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import BookingForm from '@/components/booking/BookingForm';
 import FaqAccordion from '@/components/contact/FaqAccordion';
 
 interface PageProps {
@@ -37,16 +36,45 @@ export default async function ContactPage({ params }: PageProps) {
     notFound();
   }
 
-  const apiTours = await getTours();
-  const tours = apiTours.map(toTour);
   const content = contactContent;
 
   const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/luxury_quads_morrocco';
   const tiktokUrl = process.env.NEXT_PUBLIC_TIKTOK_URL ?? 'https://www.tiktok.com/@hsquadsluxurymorocco';
   const facebookUrl = process.env.NEXT_PUBLIC_FACEBOOK_URL ?? 'https://www.facebook.com/share/1BeADmBxvj/';
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: locale === 'en' ? 'Do I need experience to ride a quad?' : 'Faut-il de l\'expérience pour conduire un quad ?',
+        acceptedAnswer: { '@type': 'Answer', text: locale === 'en' ? 'No prior experience is needed. Our expert guides provide a full safety briefing and riding lesson before every tour.' : 'Aucune expérience préalable n\'est nécessaire. Nos guides experts dispensent un briefing sécurité complet avant chaque tour.' },
+      },
+      {
+        '@type': 'Question',
+        name: locale === 'en' ? 'Is hotel pickup included?' : 'Le transfert depuis l\'hôtel est-il inclus ?',
+        acceptedAnswer: { '@type': 'Answer', text: locale === 'en' ? 'Yes, private hotel pickup from Marrakech city center is available for all tours.' : 'Oui, le transfert privé depuis le centre-ville de Marrakech est disponible pour tous les tours.' },
+      },
+      {
+        '@type': 'Question',
+        name: locale === 'en' ? 'What should I wear?' : 'Que dois-je porter ?',
+        acceptedAnswer: { '@type': 'Answer', text: locale === 'en' ? 'Comfortable clothing and closed-toe shoes are recommended. All safety equipment including helmets and goggles is provided.' : 'Des vêtements confortables et des chaussures fermées sont recommandés. Tout l\'équipement de sécurité (casques, lunettes) est fourni.' },
+      },
+      {
+        '@type': 'Question',
+        name: locale === 'en' ? 'Can I book a private tour?' : 'Puis-je réserver un tour privé ?',
+        acceptedAnswer: { '@type': 'Answer', text: locale === 'en' ? 'Absolutely. All our tours are private by default — no shared groups. We also offer fully bespoke itineraries.' : 'Absolument. Tous nos tours sont privés par défaut — aucun groupe partagé. Nous proposons également des itinéraires entièrement sur mesure.' },
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <Navbar locale={locale} />
 
       <main className="min-h-screen pt-32 pb-16">
@@ -157,7 +185,7 @@ export default async function ContactPage({ params }: PageProps) {
                 </p>
               </div>
               <a
-                href="https://maps.google.com/?q=31.5200,-8.1200"
+                href="https://maps.app.goo.gl/WDtzzaeK62Dug9yo6"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center border font-syne font-semibold text-[10px] tracking-wider uppercase px-4 py-2.5 transition-all hover:opacity-80"
@@ -168,10 +196,45 @@ export default async function ContactPage({ params }: PageProps) {
             </div>
           </section>
 
-          {/* ── Form + Info ── */}
+          {/* ── WhatsApp Reservation CTA ── */}
           <section className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-20">
-            <div className="lg:col-span-3">
-              <BookingForm locale={locale} toursList={tours} />
+            <div className="lg:col-span-3 flex flex-col justify-center">
+              <div
+                className="p-8 border flex flex-col gap-6"
+                style={{ borderColor: 'oklch(var(--rule) / 0.3)', background: 'oklch(var(--bg-subtle))' }}
+              >
+                <div>
+                  <p className="font-syne text-[9px] font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: 'oklch(var(--gold))' }}>
+                    {locale === 'en' ? 'Reservations' : 'Réservations'}
+                  </p>
+                  <h2 className="font-display font-light italic text-2xl md:text-3xl mb-3" style={{ color: 'oklch(var(--ink))' }}>
+                    {locale === 'en' ? 'Book directly on WhatsApp' : 'Réservez directement sur WhatsApp'}
+                  </h2>
+                  <p className="font-sans font-light text-sm leading-[1.8]" style={{ color: 'oklch(var(--ink-muted))' }}>
+                    {locale === 'en'
+                      ? 'All our reservations are handled personally via WhatsApp. Send us a message with your preferred date, group size, and experience — we\'ll confirm availability and details within the hour.'
+                      : 'Toutes nos réservations sont gérées personnellement via WhatsApp. Envoyez-nous un message avec votre date souhaitée, la taille du groupe et l\'expérience souhaitée — nous confirmerons les disponibilités sous une heure.'}
+                  </p>
+                </div>
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    locale === 'en'
+                      ? 'Hi, I\'d like to book a luxury quad experience in Agafay Desert'
+                      : 'Bonjour, je souhaite réserver une expérience quad de luxe dans le Désert d\'Agafay'
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-3 bg-[#25D366] text-white font-syne font-semibold text-[11px] tracking-wider uppercase px-8 py-4 transition-opacity hover:opacity-90 self-start"
+                >
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  {locale === 'en' ? 'Start WhatsApp Chat' : 'Ouvrir WhatsApp'}
+                </a>
+                <p className="font-sans text-xs" style={{ color: 'oklch(var(--ink-faint))' }}>
+                  ⚡ {locale === 'en' ? 'Usually replies within 1 hour · Available 7 days a week' : 'Répond généralement sous 1 heure · Disponible 7j/7'}
+                </p>
+              </div>
             </div>
 
             <div className="lg:col-span-2 flex flex-col gap-6">
@@ -298,22 +361,39 @@ export default async function ContactPage({ params }: PageProps) {
 
           {/* ── Google Maps ── */}
           <section className="mb-20">
-            <iframe
-              src="https://maps.google.com/maps?q=31.5200,-8.1200&z=13&output=embed"
-              width="100%"
-              height="420"
-              style={{ border: 0, borderRadius: '12px' }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Agafay Desert Meeting Point"
-            />
-            <p className="mt-4 font-sans text-xs text-center" style={{ color: 'oklch(var(--ink-faint))' }}>
-              📍{' '}
-              {locale === 'en'
-                ? 'Agafay Desert Meeting Point — We also offer hotel pickup from Marrakech city center (+30 min transfer)'
-                : "Point de rendez-vous — Désert d'Agafay — Nous proposons également le transfert depuis le centre-ville de Marrakech (+30 min)"}
-            </p>
+            <div className="border" style={{ borderColor: 'oklch(var(--rule) / 0.3)', overflow: 'hidden' }}>
+              <iframe
+                src="https://maps.google.com/maps?q=31.4508125,-8.1979375&z=16&output=embed"
+                width="100%"
+                height="440"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="HS Luxury Quads — Meeting Point"
+              />
+            </div>
+            <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
+              <p className="font-sans text-xs" style={{ color: 'oklch(var(--ink-faint))' }}>
+                📍{' '}
+                {locale === 'en'
+                  ? 'Agafay Desert Meeting Point — Hotel pickup from Marrakech available (+30 min)'
+                  : "Point de rendez-vous — Désert d'Agafay — Transfert depuis Marrakech disponible (+30 min)"}
+              </p>
+              <a
+                href="https://maps.app.goo.gl/WDtzzaeK62Dug9yo6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-1.5 font-syne text-[10px] font-semibold tracking-wider uppercase transition-opacity hover:opacity-70"
+                style={{ color: 'oklch(var(--gold))' }}
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {locale === 'en' ? 'Open in Google Maps' : 'Ouvrir dans Google Maps'}
+              </a>
+            </div>
           </section>
 
           {/* ── FAQ ── */}

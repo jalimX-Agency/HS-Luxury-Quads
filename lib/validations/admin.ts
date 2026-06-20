@@ -106,12 +106,35 @@ export const reviewWriteSchema = z.object({
 
 export const reviewUpdateSchema = reviewWriteSchema.partial();
 
+export const GALLERY_CATEGORIES = ['all', 'quads', 'camel', 'dinner', 'camp'] as const;
+export type GalleryCategory = typeof GALLERY_CATEGORIES[number];
+
 export const galleryWriteSchema = z.object({
   url: z.string().trim().min(1).max(500),
   alt: localizedStringSchema,
   imageKey: z.string().trim().optional().nullable(),
+  category: z.enum(GALLERY_CATEGORIES).default('all'),
   sortOrder: z.coerce.number().int().min(0).default(0),
   isActive: z.boolean().default(true),
 });
 
 export const galleryUpdateSchema = galleryWriteSchema.partial();
+
+export const blogWriteSchema = z.object({
+  slug: z
+    .string()
+    .trim()
+    .min(1)
+    .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase letters, numbers, and hyphens'),
+  title: localizedStringSchema,
+  excerpt: localizedStringSchema,
+  content: localizedStringSchema,
+  image: z.string().trim().default(''),
+  imageKey: z.string().trim().optional().nullable(),
+  category: z.string().trim().max(80).default(''),
+  author: z.string().trim().max(120).default('HS Luxury Quads'),
+  featured: z.boolean().default(false),
+  isPublished: z.boolean().default(false),
+});
+
+export const blogUpdateSchema = blogWriteSchema.partial();

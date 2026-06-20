@@ -17,6 +17,7 @@ export default async function AdminGalleryPage() {
           id: item.id,
           url: item.url,
           alt: item.alt as { en: string; fr: string },
+          category: item.category,
           sortOrder: item.sortOrder,
           isActive: item.isActive,
           imageKey: item.imageKey,

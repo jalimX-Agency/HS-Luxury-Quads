@@ -38,6 +38,7 @@ export type GalleryMinAggregateOutputType = {
   id: string | null
   url: string | null
   imageKey: string | null
+  category: string | null
   sortOrder: number | null
   isActive: boolean | null
   createdAt: Date | null
@@ -48,6 +49,7 @@ export type GalleryMaxAggregateOutputType = {
   id: string | null
   url: string | null
   imageKey: string | null
+  category: string | null
   sortOrder: number | null
   isActive: boolean | null
   createdAt: Date | null
@@ -59,6 +61,7 @@ export type GalleryCountAggregateOutputType = {
   url: number
   alt: number
   imageKey: number
+  category: number
   sortOrder: number
   isActive: number
   createdAt: number
@@ -79,6 +82,7 @@ export type GalleryMinAggregateInputType = {
   id?: true
   url?: true
   imageKey?: true
+  category?: true
   sortOrder?: true
   isActive?: true
   createdAt?: true
@@ -89,6 +93,7 @@ export type GalleryMaxAggregateInputType = {
   id?: true
   url?: true
   imageKey?: true
+  category?: true
   sortOrder?: true
   isActive?: true
   createdAt?: true
@@ -100,6 +105,7 @@ export type GalleryCountAggregateInputType = {
   url?: true
   alt?: true
   imageKey?: true
+  category?: true
   sortOrder?: true
   isActive?: true
   createdAt?: true
@@ -198,6 +204,7 @@ export type GalleryGroupByOutputType = {
   url: string
   alt: runtime.JsonValue
   imageKey: string | null
+  category: string
   sortOrder: number
   isActive: boolean
   createdAt: Date
@@ -232,6 +239,7 @@ export type GalleryWhereInput = {
   url?: Prisma.StringFilter<"Gallery"> | string
   alt?: Prisma.JsonFilter<"Gallery">
   imageKey?: Prisma.StringNullableFilter<"Gallery"> | string | null
+  category?: Prisma.StringFilter<"Gallery"> | string
   sortOrder?: Prisma.IntFilter<"Gallery"> | number
   isActive?: Prisma.BoolFilter<"Gallery"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Gallery"> | Date | string
@@ -243,6 +251,7 @@ export type GalleryOrderByWithRelationInput = {
   url?: Prisma.SortOrder
   alt?: Prisma.SortOrder
   imageKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -257,6 +266,7 @@ export type GalleryWhereUniqueInput = Prisma.AtLeast<{
   url?: Prisma.StringFilter<"Gallery"> | string
   alt?: Prisma.JsonFilter<"Gallery">
   imageKey?: Prisma.StringNullableFilter<"Gallery"> | string | null
+  category?: Prisma.StringFilter<"Gallery"> | string
   sortOrder?: Prisma.IntFilter<"Gallery"> | number
   isActive?: Prisma.BoolFilter<"Gallery"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Gallery"> | Date | string
@@ -268,6 +278,7 @@ export type GalleryOrderByWithAggregationInput = {
   url?: Prisma.SortOrder
   alt?: Prisma.SortOrder
   imageKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -287,6 +298,7 @@ export type GalleryScalarWhereWithAggregatesInput = {
   url?: Prisma.StringWithAggregatesFilter<"Gallery"> | string
   alt?: Prisma.JsonWithAggregatesFilter<"Gallery">
   imageKey?: Prisma.StringNullableWithAggregatesFilter<"Gallery"> | string | null
+  category?: Prisma.StringWithAggregatesFilter<"Gallery"> | string
   sortOrder?: Prisma.IntWithAggregatesFilter<"Gallery"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"Gallery"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Gallery"> | Date | string
@@ -298,6 +310,7 @@ export type GalleryCreateInput = {
   url: string
   alt: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: string | null
+  category?: string
   sortOrder?: number
   isActive?: boolean
   createdAt?: Date | string
@@ -309,6 +322,7 @@ export type GalleryUncheckedCreateInput = {
   url: string
   alt: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: string | null
+  category?: string
   sortOrder?: number
   isActive?: boolean
   createdAt?: Date | string
@@ -320,6 +334,7 @@ export type GalleryUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -331,6 +346,7 @@ export type GalleryUncheckedUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -342,6 +358,7 @@ export type GalleryCreateManyInput = {
   url: string
   alt: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: string | null
+  category?: string
   sortOrder?: number
   isActive?: boolean
   createdAt?: Date | string
@@ -353,6 +370,7 @@ export type GalleryUpdateManyMutationInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -364,6 +382,7 @@ export type GalleryUncheckedUpdateManyInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -375,6 +394,7 @@ export type GalleryCountOrderByAggregateInput = {
   url?: Prisma.SortOrder
   alt?: Prisma.SortOrder
   imageKey?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -389,6 +409,7 @@ export type GalleryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   imageKey?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -399,6 +420,7 @@ export type GalleryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   imageKey?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -416,6 +438,7 @@ export type GallerySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   url?: boolean
   alt?: boolean
   imageKey?: boolean
+  category?: boolean
   sortOrder?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -427,6 +450,7 @@ export type GallerySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   url?: boolean
   alt?: boolean
   imageKey?: boolean
+  category?: boolean
   sortOrder?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -438,6 +462,7 @@ export type GallerySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   url?: boolean
   alt?: boolean
   imageKey?: boolean
+  category?: boolean
   sortOrder?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -449,13 +474,14 @@ export type GallerySelectScalar = {
   url?: boolean
   alt?: boolean
   imageKey?: boolean
+  category?: boolean
   sortOrder?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GalleryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "alt" | "imageKey" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["gallery"]>
+export type GalleryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "alt" | "imageKey" | "category" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["gallery"]>
 
 export type $GalleryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Gallery"
@@ -465,6 +491,7 @@ export type $GalleryPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     url: string
     alt: runtime.JsonValue
     imageKey: string | null
+    category: string
     sortOrder: number
     isActive: boolean
     createdAt: Date
@@ -896,6 +923,7 @@ export interface GalleryFieldRefs {
   readonly url: Prisma.FieldRef<"Gallery", 'String'>
   readonly alt: Prisma.FieldRef<"Gallery", 'Json'>
   readonly imageKey: Prisma.FieldRef<"Gallery", 'String'>
+  readonly category: Prisma.FieldRef<"Gallery", 'String'>
   readonly sortOrder: Prisma.FieldRef<"Gallery", 'Int'>
   readonly isActive: Prisma.FieldRef<"Gallery", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Gallery", 'DateTime'>

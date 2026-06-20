@@ -16,6 +16,7 @@ interface GalleryRow {
   id: string;
   url: string;
   alt: { en: string; fr: string };
+  category: string;
   sortOrder: number;
   isActive: boolean;
   imageKey?: string | null;
@@ -25,9 +26,18 @@ interface GalleryManagerProps {
   items: GalleryRow[];
 }
 
+const CATEGORY_OPTIONS = [
+  { value: 'all', label: 'All / General' },
+  { value: 'quads', label: 'Quad Biking' },
+  { value: 'camel', label: 'Camel Rides' },
+  { value: 'dinner', label: 'Sunset & Dinner' },
+  { value: 'camp', label: 'Desert Camp' },
+] as const;
+
 const emptyItem = {
   url: '',
   alt: { en: '', fr: '' },
+  category: 'all' as string,
   sortOrder: 0,
   isActive: true,
   imageKey: null as string | null,
@@ -37,6 +47,7 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
   const router = useRouter();
   const { loading, error, success, run } = useAdminMutation();
   const [items, setItems] = useState(initialItems);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyItem);
   const [uploading, setUploading] = useState(false);
@@ -54,6 +65,7 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
     setForm({
       url: item.url,
       alt: item.alt,
+      category: item.category ?? 'all',
       sortOrder: item.sortOrder,
       isActive: item.isActive,
       imageKey: item.imageKey ?? null,
@@ -105,18 +117,28 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
 
     try {
       if (editingId) {
-        await run(
+        const data = await run(
           `/api/admin/gallery/${editingId}`,
           { method: 'PATCH', body: JSON.stringify(form) },
           'Gallery item updated',
         );
+        if (data?.item) {
+          setItems((current) =>
+            current.map((it) => (it.id === editingId ? { ...it, ...data.item } : it))
+          );
+        }
       } else {
-        await run('/api/admin/gallery', { method: 'POST', body: JSON.stringify(form) }, 'Gallery item created');
+        const data = await run(
+          '/api/admin/gallery',
+          { method: 'POST', body: JSON.stringify(form) },
+          'Gallery item created',
+        );
+        if (data?.item) {
+          setItems((current) => [...current, data.item]);
+        }
       }
 
       resetForm();
-      router.refresh();
-      window.location.reload();
     } catch {
       // handled in hook
     }
@@ -134,14 +156,40 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
     }
   };
 
+  const filteredItems = filterCategory === 'all'
+    ? items
+    : items.filter((item) => item.category === filterCategory);
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-8">
       <div className="space-y-4">
         {error ? <AdminAlert message={error} /> : null}
         {success ? <AdminAlert message={success} type="success" /> : null}
 
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2">
+          {CATEGORY_OPTIONS.map((opt) => {
+            const count = opt.value === 'all' ? items.length : items.filter((it) => it.category === opt.value).length;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setFilterCategory(opt.value)}
+                className={`font-syne text-[10px] font-semibold tracking-wider uppercase px-4 py-2 border transition-all duration-150 flex items-center gap-1.5 ${
+                  filterCategory === opt.value
+                    ? 'bg-gold text-background border-gold'
+                    : 'border-rule/30 text-ink-muted hover:border-gold hover:text-gold'
+                }`}
+              >
+                {opt.label}
+                <span className="opacity-60 font-normal tabular-nums">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <div key={item.id} className="border border-rule/30 bg-bg-subtle overflow-hidden">
               <div className="relative h-48 bg-bg-sunken">
                 <Image src={item.url} alt={item.alt.en} fill className="object-cover" />
@@ -151,6 +199,9 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
                 <p className="text-xs text-ink-faint">
                   Order {item.sortOrder} · {item.isActive ? 'Active' : 'Hidden'}
                   {item.imageKey ? ' · R2' : ''}
+                </p>
+                <p className="text-[10px] font-syne font-semibold tracking-wider uppercase text-gold/80">
+                  {CATEGORY_OPTIONS.find((o) => o.value === item.category)?.label ?? item.category}
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <AdminButton type="button" variant="secondary" onClick={() => startEdit(item)}>
@@ -205,6 +256,19 @@ export default function GalleryManager({ items: initialItems }: GalleryManagerPr
           onChangeEn={(en) => setForm({ ...form, alt: { ...form.alt, en } })}
           onChangeFr={(fr) => setForm({ ...form, alt: { ...form.alt, fr } })}
         />
+
+        <div>
+          <label className={labelClass}>Category</label>
+          <select
+            className={inputClass}
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+          >
+            {CATEGORY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
 
         <div>
           <label className={labelClass}>Sort order</label>

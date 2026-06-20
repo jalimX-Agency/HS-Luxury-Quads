@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { Locale } from '@/content/tours';
 
 interface NavbarProps {
@@ -12,33 +12,21 @@ interface NavbarProps {
 
 export default function Navbar({ locale }: NavbarProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [langOpen, setLangOpen] = useState(false);
-  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    setMounted(true);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
 
-    // Get active theme on mount
     const el = document.documentElement;
-    const currentTheme = el.getAttribute('data-theme') as 'dark' | 'light' || 'dark';
+    const currentTheme = el.getAttribute('data-theme') as 'dark' | 'light' || 'light';
     setTheme(currentTheme);
 
-    const handleClickOutside = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
-        setLangOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -48,20 +36,21 @@ export default function Navbar({ locale }: NavbarProps) {
     setTheme(nextTheme);
   };
 
-  const switchLocale = (newLocale: Locale) => {
+  const localeHref = (loc: Locale) => {
     const segments = pathname.split('/');
-    segments[1] = newLocale;
-    router.push(segments.join('/'));
+    segments[1] = loc;
+    return segments.join('/');
   };
 
   const navLinks = [
     { href: `/${locale}/tours`, label: locale === 'en' ? 'Experiences' : 'Expériences' },
     { href: `/${locale}/about`, label: locale === 'en' ? 'About Us' : 'À Propos' },
+    { href: `/${locale}/blog`, label: 'Blog' },
     { href: `/${locale}/gallery`, label: locale === 'en' ? 'Gallery' : 'Galerie' },
-    { href: `/${locale}/contact`, label: locale === 'en' ? 'Contact' : 'Contact' },
+    { href: `/${locale}/contact`, label: 'Contact' },
   ];
 
-  const ThemeIcon = () =>
+  const themeIcon =
     theme === 'dark' ? (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
         <circle cx="12" cy="12" r="5" />
@@ -117,8 +106,9 @@ export default function Navbar({ locale }: NavbarProps) {
 
           {/* Right controls */}
           <div className="flex items-center gap-6">
-            {/* Language Dropdown – Desktop */}
-            <div ref={langRef} className="relative">
+            {/* Desktop locale switcher — inlined to avoid nested component hydration mismatch */}
+            <div className="relative">
+              {langOpen && <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />}
               <button
                 onClick={() => setLangOpen((o) => !o)}
                 className="flex items-center gap-1.5 border border-rule/30 text-ink-muted text-[10px] font-syne font-semibold tracking-[0.15em] uppercase px-3 py-1.5 hover:border-gold hover:text-gold transition-all duration-200"
@@ -134,17 +124,16 @@ export default function Navbar({ locale }: NavbarProps) {
               {langOpen && (
                 <div className="absolute top-full mt-1 right-0 bg-background border border-rule/30 shadow-xl z-50 min-w-[60px] py-1">
                   {(['en', 'fr'] as Locale[]).map((loc) => (
-                    <button
+                    <Link
                       key={loc}
-                      onClick={() => { switchLocale(loc); setLangOpen(false); }}
-                      className={`w-full text-left px-3 py-1.5 text-[10px] font-syne font-semibold tracking-[0.15em] uppercase transition-all duration-150 ${
-                        locale === loc
-                          ? 'text-gold bg-gold/5'
-                          : 'text-ink-muted hover:text-ink hover:bg-rule/10'
+                      href={localeHref(loc)}
+                      onClick={() => setLangOpen(false)}
+                      className={`block w-full text-left px-3 py-1.5 text-[10px] font-syne font-semibold tracking-[0.15em] uppercase transition-all duration-150 ${
+                        locale === loc ? 'text-gold bg-gold/5' : 'text-ink-muted hover:text-ink hover:bg-rule/10'
                       }`}
                     >
                       {loc.toUpperCase()}
-                    </button>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -172,39 +161,37 @@ export default function Navbar({ locale }: NavbarProps) {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
-          {/* Mobile Language Dropdown */}
-          <div ref={langRef} className="relative">
-            <button
-              onClick={() => setLangOpen((o) => !o)}
-              className="flex items-center gap-1 border border-rule/30 text-ink-muted text-[9px] font-syne font-semibold tracking-[0.15em] uppercase px-2.5 py-1 hover:border-gold hover:text-gold transition-all duration-200"
+        {/* Mobile locale switcher — inlined to avoid nested component hydration mismatch */}
+        <div className="relative">
+          {langOpen && <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />}
+          <button
+            onClick={() => setLangOpen((o) => !o)}
+            className="flex items-center gap-1 border border-rule/30 text-ink-muted text-[9px] font-syne font-semibold tracking-[0.15em] uppercase px-2.5 py-1 hover:border-gold hover:text-gold transition-all duration-200"
+          >
+            {locale.toUpperCase()}
+            <svg
+              className={`w-2 h-2 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
             >
-              {locale.toUpperCase()}
-              <svg
-                className={`w-2 h-2 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {langOpen && (
-              <div className="absolute top-full mt-1 right-0 bg-background border border-rule/30 shadow-xl z-50 min-w-[56px] py-1">
-                {(['en', 'fr'] as Locale[]).map((loc) => (
-                  <button
-                    key={loc}
-                    onClick={() => { switchLocale(loc); setLangOpen(false); }}
-                    className={`w-full text-left px-2.5 py-1 text-[9px] font-syne font-semibold tracking-[0.15em] uppercase transition-all duration-150 ${
-                      locale === loc
-                        ? 'text-gold bg-gold/5'
-                        : 'text-ink-muted hover:text-ink hover:bg-rule/10'
-                    }`}
-                  >
-                    {loc.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {langOpen && (
+            <div className="absolute top-full mt-1 right-0 bg-background border border-rule/30 shadow-xl z-50 min-w-[56px] py-1">
+              {(['en', 'fr'] as Locale[]).map((loc) => (
+                <Link
+                  key={loc}
+                  href={localeHref(loc)}
+                  onClick={() => setLangOpen(false)}
+                  className={`block w-full text-left px-2.5 py-1 text-[9px] font-syne font-semibold tracking-[0.15em] uppercase transition-all duration-150 ${
+                    locale === loc ? 'text-gold bg-gold/5' : 'text-ink-muted hover:text-ink hover:bg-rule/10'
+                  }`}
+                >
+                  {loc.toUpperCase()}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -264,13 +251,14 @@ export default function Navbar({ locale }: NavbarProps) {
         onClick={toggleTheme}
         className="fixed bottom-6 left-6 z-50 w-11 h-11 rounded-full border border-rule/40 bg-background/90 backdrop-blur-sm flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold shadow-lg transition-all duration-200"
         aria-label="Toggle theme"
+        suppressHydrationWarning
       >
-        <ThemeIcon />
+        {mounted ? themeIcon : <span className="w-5 h-5" />}
       </button>
 
       {/* ── Fixed Bottom-Right: WhatsApp Button ── */}
       <a
-        href="https://wa.me/1234567890"
+        href="https://wa.me/212634857515"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-200"

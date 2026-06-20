@@ -326,3 +326,62 @@
 .pb-safe {
   padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
+
+/* ─── BLOG ARTICLE PROSE ────────────────────────────────────── */
+.prose-luxury {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.85;
+  color: oklch(var(--ink-muted));
+}
+.prose-luxury h2 {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: oklch(var(--ink));
+  margin: 2.5rem 0 1rem;
+  line-height: 1.2;
+}
+.prose-luxury h3 {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: oklch(var(--gold));
+  margin: 2rem 0 0.75rem;
+}
+.prose-luxury p { margin: 0 0 1.5rem; }
+.prose-luxury ul, .prose-luxury ol { margin: 0 0 1.5rem; padding-left: 1.5rem; }
+.prose-luxury li { margin-bottom: 0.5rem; }
+.prose-luxury strong { font-weight: 600; color: oklch(var(--ink)); }
+.prose-luxury a { color: oklch(var(--gold)); text-decoration: underline; text-underline-offset: 3px; }
+.prose-luxury a:hover { opacity: 0.8; }
+.prose-luxury blockquote {
+  border-left: 2px solid oklch(var(--gold));
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  font-family: var(--font-playfair), serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: oklch(var(--ink));
+}
+
+/* ─── ADMIN INPUT ────────────────────────────────────────────── */
+.admin-input {
+  width: 100%;
+  background: oklch(var(--background-sunken));
+  border: 1px solid oklch(var(--rule) / 0.4);
+  color: oklch(var(--ink));
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+.admin-input:focus {
+  border-color: oklch(var(--gold) / 0.6);
+}

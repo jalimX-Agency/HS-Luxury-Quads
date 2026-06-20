@@ -8,6 +8,7 @@ function serializeGallery(item: {
   id: string;
   url: string;
   alt: unknown;
+  category: string;
   sortOrder: number;
   isActive: boolean;
   createdAt: Date;
@@ -17,6 +18,7 @@ function serializeGallery(item: {
     id: item.id,
     url: item.url,
     alt: item.alt,
+    category: item.category,
     sortOrder: item.sortOrder,
     isActive: item.isActive,
     createdAt: item.createdAt.toISOString(),

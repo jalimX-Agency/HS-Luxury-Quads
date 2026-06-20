@@ -10,7 +10,7 @@ interface FooterProps {
 
 export default function Footer({ locale }: FooterProps) {
   const brandName = 'HS LUXURY QUADS';
-  const whatsappNumber = '+212600000000'; // Replace with real number later
+  const whatsappNumber = '212634857515';
 
   const footerLinks = [
     { href: `/${locale}/privacy`, label: locale === 'en' ? 'Privacy Policy' : 'Politique de Confidentialité' },
@@ -22,7 +22,7 @@ export default function Footer({ locale }: FooterProps) {
   return (
     <footer className="bg-bg-sunken border-t border-rule/15 w-full pt-20 pb-28 md:pb-20 relative z-10">
       <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 pb-16 border-b border-rule/20">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16 pb-16 border-b border-rule/20">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="relative w-8 h-8">
@@ -63,6 +63,29 @@ export default function Footer({ locale }: FooterProps) {
               <li>
                 <Link href={`/${locale}/tours`} className="font-sans font-light text-sm text-ink-muted hover:text-gold transition-colors">
                   Private Luxury Tour
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-syne text-[10px] font-semibold tracking-[0.18em] uppercase text-ink-faint mb-6">
+              Blog
+            </p>
+            <ul className="flex flex-col gap-3">
+              <li>
+                <Link href={`/${locale}/blog`} className="font-sans font-light text-sm text-ink-muted hover:text-gold transition-colors">
+                  {locale === 'en' ? 'Desert Travel Guides' : 'Guides du Désert'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/blog`} className="font-sans font-light text-sm text-ink-muted hover:text-gold transition-colors">
+                  {locale === 'en' ? 'Agafay Insights' : 'Inspirations Agafay'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/about`} className="font-sans font-light text-sm text-ink-muted hover:text-gold transition-colors">
+                  {locale === 'en' ? 'About Us' : 'À Propos'}
                 </Link>
               </li>
             </ul>

@@ -56,7 +56,8 @@ export const ModelName = {
   Booking: 'Booking',
   Review: 'Review',
   SiteSettings: 'SiteSettings',
-  Gallery: 'Gallery'
+  Gallery: 'Gallery',
+  BlogPost: 'BlogPost'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -165,6 +166,7 @@ export const GalleryScalarFieldEnum = {
   url: 'url',
   alt: 'alt',
   imageKey: 'imageKey',
+  category: 'category',
   sortOrder: 'sortOrder',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -172,6 +174,26 @@ export const GalleryScalarFieldEnum = {
 } as const
 
 export type GalleryScalarFieldEnum = (typeof GalleryScalarFieldEnum)[keyof typeof GalleryScalarFieldEnum]
+
+
+export const BlogPostScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  excerpt: 'excerpt',
+  content: 'content',
+  image: 'image',
+  imageKey: 'imageKey',
+  category: 'category',
+  author: 'author',
+  featured: 'featured',
+  isPublished: 'isPublished',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BlogPostScalarFieldEnum = (typeof BlogPostScalarFieldEnum)[keyof typeof BlogPostScalarFieldEnum]
 
 
 export const SortOrder = {

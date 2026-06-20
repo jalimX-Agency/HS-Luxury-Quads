@@ -7,7 +7,8 @@ import { changePasswordSchema } from '@/lib/validations/admin';
 
 export async function POST(request: NextRequest) {
   const { response, session } = await requireAdmin(request);
-  if (response || !session) return response;
+  if (response) return response;
+  if (!session) return jsonError('Unauthorized', 401);
 
   try {
     const body = await request.json();

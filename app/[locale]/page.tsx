@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +12,7 @@ import { toTour } from '@/lib/tours';
 import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { FadeIn } from '@/components/ui/FadeIn';
 
 interface PageProps {
   params: {
@@ -252,10 +255,7 @@ export default async function HomePage({ params }: PageProps) {
               { stat: '4.9★', label: t.statsLabel3 },
               { stat: '50+', label: t.statsLabel4 },
             ].map((item, i) => (
-              <div
-                key={i}
-                className="text-center md:text-left px-0 md:px-12 first:pl-0 last:pr-0 relative"
-              >
+              <FadeIn key={i} delay={i * 0.1} className="text-center md:text-left px-0 md:px-12 first:pl-0 last:pr-0 relative">
                 {i > 0 && (
                   <div
                     className="absolute left-0 top-0 h-full w-[1px] hidden md:block"
@@ -263,18 +263,15 @@ export default async function HomePage({ params }: PageProps) {
                   />
                 )}
                 <p
-                  className="font-display font-light text-4xl md:text-5xl leading-none mb-2 animate-countUp"
-                  style={{
-                    color: 'oklch(var(--gold))',
-                    animationDelay: `${i * 0.12}s`,
-                  }}
+                  className="font-display font-light text-4xl md:text-5xl leading-none mb-2"
+                  style={{ color: 'oklch(var(--gold))' }}
                 >
                   {item.stat}
                 </p>
                 <p className="font-syne text-[9px] font-medium tracking-[0.22em] uppercase" style={{ color: 'oklch(var(--ink-faint))' }}>
                   {item.label}
                 </p>
-              </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -308,8 +305,8 @@ export default async function HomePage({ params }: PageProps) {
           {/* Tour list — editorial stacked layout */}
           <div className="flex flex-col">
             {tours.map((tour, index) => (
+              <FadeIn key={tour.slug} delay={index * 0.12}>
               <div
-                key={tour.slug}
                 className="tour-list-item group relative"
               >
                 <Link href={`/${locale}/tours/${tour.slug}`}>
@@ -406,6 +403,7 @@ export default async function HomePage({ params }: PageProps) {
                   </div>
                 </Link>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -422,7 +420,7 @@ export default async function HomePage({ params }: PageProps) {
         <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
             {/* Left: sticky quote */}
-            <div className="lg:col-span-4 lg:sticky lg:top-32">
+            <FadeIn direction="left" className="lg:col-span-4 lg:sticky lg:top-32">
               <p className="section-label mb-8">{t.philosophyLabel}</p>
               <blockquote
                 className="font-display italic font-light text-2xl lg:text-[1.6rem] leading-[1.4]"
@@ -434,10 +432,10 @@ export default async function HomePage({ params }: PageProps) {
               >
                 {t.quoteText}
               </blockquote>
-            </div>
+            </FadeIn>
 
             {/* Right: story + values */}
-            <div className="lg:col-span-8">
+            <FadeIn direction="right" className="lg:col-span-8">
               <p
                 className="font-sans font-light text-base leading-[1.9] mb-16"
                 style={{ color: 'oklch(var(--ink-muted))' }}
@@ -477,7 +475,7 @@ export default async function HomePage({ params }: PageProps) {
                   </div>
                 ))}
               </div>
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -539,7 +537,7 @@ export default async function HomePage({ params }: PageProps) {
           <p className="section-label mb-16">{t.reviewsLabel}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
             {displayedReviews.map((review, i) => (
-              <div key={i} className="review-card">
+              <FadeIn key={i} delay={i * 0.12} className="review-card">
                 {/* Stars */}
                 <div className="flex gap-0.5 mb-5">
                   {[...Array(5)].map((_, s) => (
@@ -562,7 +560,7 @@ export default async function HomePage({ params }: PageProps) {
                     {review.origin} · {review.tour}
                   </p>
                 </div>
-              </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -728,7 +726,7 @@ export default async function HomePage({ params }: PageProps) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 md:px-16">
+        <FadeIn className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 md:px-16">
           <p className="section-label justify-center mb-8 text-white/60">
             {t.ctaLabel}
           </p>
@@ -750,7 +748,7 @@ export default async function HomePage({ params }: PageProps) {
               <span>{t.enquiry}</span>
             </Link>
             <a
-              href="https://wa.me/+212600000000"
+              href="https://wa.me/212634857515"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline inline-flex items-center justify-center gap-2.5"
@@ -761,7 +759,7 @@ export default async function HomePage({ params }: PageProps) {
               {t.whatsapp}
             </a>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       <Footer locale={locale} />

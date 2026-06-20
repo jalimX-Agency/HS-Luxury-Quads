@@ -10,6 +10,7 @@ const navItems = [
   { href: '/admin/tours', label: 'Tours' },
   { href: '/admin/reviews', label: 'Reviews' },
   { href: '/admin/gallery', label: 'Gallery' },
+  { href: '/admin/blog', label: 'Blog' },
   { href: '/admin/settings', label: 'Settings' },
 ];
 

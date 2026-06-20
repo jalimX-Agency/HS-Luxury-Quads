@@ -27,6 +27,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
+    "framer-motion": "^12.40.0",
     "lucide-react": "^0.379.0",
     "next": "^14.2.3",
     "pg": "^8.21.0",

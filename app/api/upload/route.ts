@@ -1,4 +1,6 @@
+import { NextRequest } from 'next/server'
 import { z } from 'zod'
+import { requireAdmin } from '@/lib/admin-api'
 import { jsonSuccess, handleApiError } from '@/lib/api-response'
 import { generateKey, generatePresignedUrl, getPublicUrl, ALLOWED_FOLDERS, ALLOWED_TYPES } from '@/lib/r2'
 
@@ -8,7 +10,10 @@ const uploadSchema = z.object({
   folder: z.enum(ALLOWED_FOLDERS),
 })
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const { response } = await requireAdmin(request)
+  if (response) return response
+
   try {
     const body = await request.json()
     const { filename, contentType, folder } = uploadSchema.parse(body)

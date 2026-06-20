@@ -47,3 +47,8 @@ export type SiteSettings = Prisma.SiteSettingsModel
  * 
  */
 export type Gallery = Prisma.GalleryModel
+/**
+ * Model BlogPost
+ * 
+ */
+export type BlogPost = Prisma.BlogPostModel

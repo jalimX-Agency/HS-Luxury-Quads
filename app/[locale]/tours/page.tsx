@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
@@ -7,6 +9,7 @@ import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TourCard from '@/components/tours/TourCard';
+import { FadeIn } from '@/components/ui/FadeIn';
 
 interface PageProps {
   params: {
@@ -35,8 +38,17 @@ export default async function ToursPage({ params }: PageProps) {
   const apiTours = await getTours();
   const tours = apiTours.map(toTour);
 
+  const jsonLd = seoConfig.tours.jsonLd;
+
   return (
     <>
+      {jsonLd.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
       <Navbar locale={locale} />
 
       <main className="min-h-screen pt-32 pb-16">
@@ -56,8 +68,10 @@ export default async function ToursPage({ params }: PageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {tours.map((tour) => (
-              <TourCard key={tour.slug} tour={tour} locale={locale} />
+            {tours.map((tour, i) => (
+              <FadeIn key={tour.slug} delay={i * 0.12}>
+                <TourCard tour={tour} locale={locale} />
+              </FadeIn>
             ))}
           </div>
         </div>
