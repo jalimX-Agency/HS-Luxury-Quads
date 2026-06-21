@@ -66,7 +66,7 @@ export function toTour(api: ApiTour): ContentTour {
     faqs: api.faqs,
     price: {
       ...api.price,
-      currency: api.price.currency as 'EUR',
+      currency: api.price.currency as 'MAD',
     },
     duration: api.duration,
     images: api.images,
