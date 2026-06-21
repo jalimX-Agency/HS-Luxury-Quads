@@ -23,7 +23,7 @@ const organizationSchema = {
   name: brandName,
   url: siteUrl,
   image: defaultOgImage,
-  priceRange: '€€€',
+  priceRange: 'MAD',
   areaServed: ['Marrakech', 'Agafay Desert', 'Morocco'],
   address: {
     '@type': 'PostalAddress',

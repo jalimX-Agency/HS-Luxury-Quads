@@ -17,7 +17,7 @@ export interface Tour {
   faqs: TourFaq[];
   price: {
     amount: number;
-    currency: 'EUR';
+    currency: 'MAD';
     display: LocalizedString;
   };
   duration: LocalizedString;
@@ -111,10 +111,10 @@ export const tours: Tour[] = [
     ],
     price: {
       amount: 120,
-      currency: 'EUR',
+      currency: 'MAD',
       display: {
-        en: 'From EUR120 per rider',
-        fr: 'A partir de 120 EUR par conducteur',
+        en: 'From 120 Dh per rider',
+        fr: 'A partir de 120 Dh par conducteur',
       },
     },
     duration: {
@@ -206,10 +206,10 @@ export const tours: Tour[] = [
     ],
     price: {
       amount: 180,
-      currency: 'EUR',
+      currency: 'MAD',
       display: {
-        en: 'From EUR180 per guest',
-        fr: 'A partir de 180 EUR par personne',
+        en: 'From 180 Dh per guest',
+        fr: 'A partir de 180 Dh par personne',
       },
     },
     duration: {
@@ -301,10 +301,10 @@ export const tours: Tour[] = [
     ],
     price: {
       amount: 250,
-      currency: 'EUR',
+      currency: 'MAD',
       display: {
-        en: 'From EUR250 per guest',
-        fr: 'A partir de 250 EUR par personne',
+        en: 'From 250 Dh per guest',
+        fr: 'A partir de 250 Dh par personne',
       },
     },
     duration: {

@@ -175,7 +175,7 @@ export default async function TourDetailPage({ params }: PageProps) {
                   {locale === 'en' ? 'Reserve via WhatsApp' : 'Réserver par WhatsApp'}
                 </p>
                 <p className="font-display italic text-2xl text-gold font-light mb-1">
-                  €{tour.price.amount}
+                  {tour.price.amount} Dh
                   <span className="font-sans not-italic text-xs text-ink-faint ml-1">
                     {locale === 'en' ? '/ rider' : '/ pers.'}
                   </span>

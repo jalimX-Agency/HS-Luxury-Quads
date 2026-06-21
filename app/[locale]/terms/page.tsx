@@ -43,8 +43,8 @@ export default function TermsPage({ params }: PageProps) {
       {
         heading: locale === 'en' ? '2. Pricing & Payment' : '2. Tarifs et paiement',
         content: locale === 'en'
-          ? 'Prices are displayed in Euros (EUR) per person unless otherwise stated. Final pricing may vary based on group size, custom requests, and seasonal adjustments. Payment terms will be communicated during the confirmation process. We accept cash on arrival, bank transfer, and secure online payment methods where applicable.'
-          : 'Les prix sont affichés en euros (EUR) par personne sauf indication contraire. Le prix final peut varier en fonction de la taille du groupe, des demandes personnalisées et des ajustements saisonniers. Les conditions de paiement vous seront communiquées lors du processus de confirmation. Nous acceptons les espèces à l\'arrivée, le virement bancaire et les méthodes de paiement en ligne sécurisées lorsque applicable.',
+          ? 'Prices are displayed in Moroccan Dirhams (Dh) per person unless otherwise stated. Final pricing may vary based on group size, custom requests, and seasonal adjustments. Payment terms will be communicated during the confirmation process. We accept cash on arrival, bank transfer, and secure online payment methods where applicable.'
+          : 'Les prix sont affichés en dirhams marocains (Dh) par personne sauf indication contraire. Le prix final peut varier en fonction de la taille du groupe, des demandes personnalisées et des ajustements saisonniers. Les conditions de paiement vous seront communiquées lors du processus de confirmation. Nous acceptons les espèces à l\'arrivée, le virement bancaire et les méthodes de paiement en ligne sécurisées lorsque applicable.',
       },
       {
         heading: locale === 'en' ? '3. Cancellations & Refunds' : '3. Annulations et remboursements',

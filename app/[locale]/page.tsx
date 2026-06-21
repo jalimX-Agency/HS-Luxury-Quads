@@ -384,7 +384,7 @@ export default async function HomePage({ params }: PageProps) {
                           className="font-display italic font-light text-3xl leading-none"
                           style={{ color: 'oklch(var(--gold))' }}
                         >
-                          €{tour.price.amount}
+                          {tour.price.amount} Dh
                           <span
                             className="font-sans not-italic text-xs ml-1"
                             style={{ color: 'oklch(var(--ink-faint))' }}

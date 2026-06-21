@@ -71,7 +71,7 @@ export default function TourCard({ tour, locale }: TourCardProps) {
                 {locale === 'en' ? 'From' : 'À partir de'}
               </p>
               <p className="font-display italic text-2xl text-gold font-light">
-                €{tour.price.amount}{' '}
+                {tour.price.amount} Dh{' '}
                 <span className="font-sans not-italic text-xs text-ink-faint ml-1">
                   {locale === 'en' ? '/ rider' : '/ pers.'}
                 </span>

@@ -39,7 +39,7 @@ export function BasicsSection({ form, setForm, slugDisabled, hideSlug }: Section
           </div>
           <div>
             <label className={labelClass}>
-              Price amount (EUR) <span className="text-gold">*</span>
+              Price amount (Dh) <span className="text-gold">*</span>
             </label>
             <input
               type="number"
@@ -54,7 +54,7 @@ export function BasicsSection({ form, setForm, slugDisabled, hideSlug }: Section
         <div className="space-y-6">
           <div>
             <label className={labelClass}>
-              Price amount (EUR) <span className="text-gold">*</span>
+              Price amount (Dh) <span className="text-gold">*</span>
             </label>
             <input
               type="number"
