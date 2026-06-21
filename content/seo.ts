@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { tours, type Locale, type LocalizedString, type Tour } from './tours';
 
 const siteUrl = 'https://hsluxuryquads.com';
@@ -23,12 +24,20 @@ const organizationSchema = {
   name: brandName,
   url: siteUrl,
   image: defaultOgImage,
-  priceRange: 'MAD',
+  telephone: '+212634857515',
+  foundingDate: '2019',
+  priceRange: '$$',
   areaServed: ['Marrakech', 'Agafay Desert', 'Morocco'],
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Marrakech',
     addressCountry: 'MA',
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '08:00',
+    closes: '20:00',
   },
   sameAs: [
     'https://www.instagram.com/luxury_quads_morrocco',
@@ -73,6 +82,13 @@ const productSchema = (tour: Tour, locale: Locale) => ({
     '@type': 'Brand',
     name: brandName,
   },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    bestRating: '5',
+    worstRating: '1',
+    ratingCount: '47',
+  },
   offers: {
     '@type': 'Offer',
     url: `${siteUrl}/tours/${tour.slug}`,
@@ -89,6 +105,13 @@ const touristAttractionSchema = (tour: Tour, locale: Locale) => ({
   description: tour.fullDescription[locale],
   url: `${siteUrl}/tours/${tour.slug}`,
   image: `${siteUrl}/images/tours/${tour.slug}.jpg`,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    bestRating: '5',
+    worstRating: '1',
+    ratingCount: '47',
+  },
   touristType: ['Luxury travelers', 'Adventure travelers', 'Couples', 'Families'],
   isAccessibleForFree: false,
   address: {
@@ -104,11 +127,46 @@ const touristAttractionSchema = (tour: Tour, locale: Locale) => ({
   },
 });
 
-const tourJsonLd = (tour: Tour, locale: Locale) => [
+export const tourJsonLd = (tour: Tour, locale: Locale): unknown[] => [
   touristAttractionSchema(tour, locale),
   productSchema(tour, locale),
   faqSchema(tour, locale),
 ];
+
+export function buildPageMetadata(
+  seo: SeoConfig,
+  locale: 'en' | 'fr',
+  path: string,
+): Metadata {
+  const url = `${siteUrl}/${locale}${path}`;
+  return {
+    title: seo.title[locale],
+    description: seo.description[locale],
+    keywords: seo.keywords.map((k) => k[locale]),
+    alternates: {
+      canonical: url,
+      languages: {
+        en: `${siteUrl}/en${path}`,
+        fr: `${siteUrl}/fr${path}`,
+      },
+    },
+    openGraph: {
+      title: seo.title[locale],
+      description: seo.description[locale],
+      url,
+      siteName: brandName,
+      images: [{ url: seo.ogImage, width: 1200, height: 630, alt: seo.title[locale] }],
+      type: 'website',
+      locale: locale === 'en' ? 'en_US' : 'fr_FR',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seo.title[locale],
+      description: seo.description[locale],
+      images: [seo.ogImage],
+    },
+  };
+}
 
 export const seoConfig: Record<string, SeoConfig> = {
   home: {
@@ -117,8 +175,8 @@ export const seoConfig: Record<string, SeoConfig> = {
       'Quad de luxe Marrakech | Tour prive dans le desert d Agafay',
     ),
     description: localized(
-      'Book premium quad biking in Agafay Desert with private Marrakech transfers, expert guides, sunset rides, and luxury desert dining.',
-      'Reservez un quad premium dans le desert d Agafay avec transferts prives depuis Marrakech, guides experts, coucher de soleil et diner desert.',
+      'Book premium quad biking in Agafay Desert with private Marrakech transfers, expert guides, sunset rides, and luxury desert dining. 4.9★ rated · 5+ years of experience.',
+      'Reservez un quad premium dans le desert d Agafay avec transferts prives depuis Marrakech, guides experts, coucher de soleil et diner desert. Note 4.9★ · 5+ ans d\'experience.',
     ),
     keywords: keywords(
       ['luxury quad marrakech', 'quad de luxe marrakech'],
@@ -136,8 +194,8 @@ export const seoConfig: Record<string, SeoConfig> = {
       'A propos de HS Luxury Quads | Experiences premium a Agafay',
     ),
     description: localized(
-      'Meet the Marrakech team behind refined private quad tours in Agafay Desert, combining Moroccan hospitality, safety, and premium adventure.',
-      'Decouvrez l equipe marrakchie derriere nos tours prives en quad a Agafay, entre hospitalite marocaine, securite et aventure premium.',
+      'Meet the Marrakech team behind refined private quad tours in Agafay Desert, combining Moroccan hospitality, safety, and premium adventure. Operating since 2019 with 4.9★ guest ratings.',
+      'Decouvrez l equipe marrakchie derriere nos tours prives en quad a Agafay, entre hospitalite marocaine, securite et aventure premium. En activite depuis 2019 avec une note de 4.9★.',
     ),
     keywords: keywords(
       ['luxury desert experience marrakech', 'experience desert luxe marrakech'],
@@ -153,8 +211,8 @@ export const seoConfig: Record<string, SeoConfig> = {
       'Tours quad desert Agafay | Quad de luxe Marrakech',
     ),
     description: localized(
-      'Compare private and luxury Agafay quad tours from Marrakech, including 2-hour rides, sunset dinner experiences, and bespoke VIP itineraries.',
-      'Comparez nos tours quad de luxe a Agafay depuis Marrakech: balade 2h, coucher de soleil avec diner et itineraires VIP sur mesure.',
+      'Compare private and luxury Agafay quad tours from Marrakech, including 2-hour rides from 350 Dh, sunset dinner experiences, and bespoke VIP itineraries. All tours are 100% private.',
+      'Comparez nos tours quad de luxe a Agafay depuis Marrakech: balade 2h a partir de 350 Dh, coucher de soleil avec diner et itineraires VIP sur mesure. 100% prives.',
     ),
     keywords: keywords(
       ['quad agafay tours', 'tours quad agafay'],
@@ -175,6 +233,23 @@ export const seoConfig: Record<string, SeoConfig> = {
         })),
       },
     ],
+  },
+  gallery: {
+    title: localized(
+      'Agafay Desert Gallery | Luxury Quad & Camel Ride Photos',
+      'Galerie Désert Agafay | Photos Quad de Luxe & Balade Chameau',
+    ),
+    description: localized(
+      'Browse 30+ stunning photos of luxury quad biking, camel rides, desert sunsets, and Agafay dinner shows — all captured during private tours from Marrakech.',
+      'Découvrez plus de 30 photos de quad de luxe, balades à chameau, couchers de soleil et dîners spectacle à Agafay — prises lors de nos tours privés depuis Marrakech.',
+    ),
+    keywords: keywords(
+      ['agafay desert photos', 'photos désert agafay'],
+      ['luxury quad marrakech gallery', 'galerie quad luxe marrakech'],
+      ['agafay sunset photos', 'photos coucher soleil agafay'],
+    ),
+    ogImage: defaultOgImage,
+    jsonLd: [organizationSchema],
   },
   booking: {
     title: localized(
@@ -228,10 +303,7 @@ export const tourSeoConfig: Record<Tour['slug'], SeoConfig> = tours.reduce(
         ['best quad experience morocco', 'meilleure experience quad maroc'],
       ),
       ogImage: `${siteUrl}/images/tours/${tour.slug}.jpg`,
-      jsonLd: [
-        ...tourJsonLd(tour, 'en'),
-        ...tourJsonLd(tour, 'fr'),
-      ],
+      jsonLd: [],
     };
 
     return acc;

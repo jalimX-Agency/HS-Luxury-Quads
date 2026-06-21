@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
 import { aboutContent } from '@/content/ui';
-import { seoConfig } from '@/content/seo';
+import { seoConfig, buildPageMetadata } from '@/content/seo';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -16,12 +16,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const seo = seoConfig.about;
-  return {
-    title: seo.title[locale],
-    description: seo.description[locale],
-    keywords: seo.keywords.map((k) => k[locale]),
-  };
+  return buildPageMetadata(seoConfig.about, locale, '/about');
 }
 
 export default function AboutPage({ params }: PageProps) {
@@ -35,6 +30,9 @@ export default function AboutPage({ params }: PageProps) {
 
   return (
     <>
+      {seoConfig.about.jsonLd.map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
       <Navbar locale={locale} />
 
       <main className="min-h-screen pt-32 pb-16">

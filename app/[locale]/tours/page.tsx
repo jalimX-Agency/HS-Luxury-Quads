@@ -3,7 +3,7 @@ export const revalidate = 60;
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { seoConfig } from '@/content/seo';
+import { seoConfig, buildPageMetadata } from '@/content/seo';
 import { fetchActiveTours } from '@/lib/queries';
 import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
@@ -20,12 +20,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const seo = seoConfig.tours;
-  return {
-    title: seo.title[locale],
-    description: seo.description[locale],
-    keywords: seo.keywords.map((k) => k[locale]),
-  };
+  return buildPageMetadata(seoConfig.tours, locale, '/tours');
 }
 
 export default async function ToursPage({ params }: PageProps) {

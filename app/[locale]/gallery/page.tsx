@@ -3,6 +3,7 @@ export const revalidate = 3600;
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
+import { seoConfig, buildPageMetadata } from '@/content/seo';
 import { fetchActiveGallery } from '@/lib/queries';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -17,10 +18,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  return {
-    title: locale === 'en' ? 'Agafay Desert Photo Gallery | HS Luxury Quads' : 'Galerie Photo du Désert d\'Agafay | HS Luxury Quads',
-    description: locale === 'en' ? 'Explore visual highlights of premium quad biking expeditions and sunset moments in Marrakech.' : 'Découvrez les clichés exclusifs de nos randonnées en quad et couchers de soleil à Marrakech.',
-  };
+  return buildPageMetadata(seoConfig.gallery, locale, '/gallery');
 }
 
 export default async function GalleryPage({ params }: PageProps) {
@@ -34,6 +32,9 @@ export default async function GalleryPage({ params }: PageProps) {
 
   return (
     <>
+      {seoConfig.gallery.jsonLd.map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
       <Navbar locale={locale} />
 
       <main className="min-h-screen pt-32 pb-16">

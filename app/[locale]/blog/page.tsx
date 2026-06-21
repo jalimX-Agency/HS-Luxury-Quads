@@ -28,10 +28,15 @@ export default async function BlogPage({ params }: PageProps) {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') notFound();
 
-  const posts = await prisma.blogPost.findMany({
-    where: { isPublished: true },
-    orderBy: [{ featured: 'desc' }, { publishedAt: 'desc' }],
-  });
+  let posts: Awaited<ReturnType<typeof prisma.blogPost.findMany>> = [];
+  try {
+    posts = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: [{ featured: 'desc' }, { publishedAt: 'desc' }],
+    });
+  } catch {
+    // DB unavailable at build time — render empty state
+  }
 
   const blogListSchema = {
     '@context': 'https://schema.org',

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Mail, MapPin, Clock, Globe } from 'lucide-react';
 import type { Locale } from '@/content/tours';
 import { contactContent } from '@/content/ui';
-import { seoConfig } from '@/content/seo';
+import { seoConfig, buildPageMetadata } from '@/content/seo';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import FaqAccordion from '@/components/contact/FaqAccordion';
@@ -19,12 +19,7 @@ const WHATSAPP_NUMBER = '212634857515';
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const seo = seoConfig.contact;
-  return {
-    title: seo.title[locale],
-    description: seo.description[locale],
-    keywords: seo.keywords.map((k) => k[locale]),
-  };
+  return buildPageMetadata(seoConfig.contact, locale, '/contact');
 }
 
 export default async function ContactPage({ params }: PageProps) {

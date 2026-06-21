@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
 import { homepageContent, aboutContent } from '@/content/ui';
-import { seoConfig } from '@/content/seo';
+import { seoConfig, buildPageMetadata } from '@/content/seo';
 import { fetchActiveTours, fetchPublishedReviews } from '@/lib/queries';
 import { toTour } from '@/lib/tours';
 import { prisma } from '@/lib/prisma';
@@ -24,12 +24,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const locale = (params.locale as Locale) || 'en';
   if (locale !== 'en' && locale !== 'fr') return {};
-  const seo = seoConfig.home;
-  return {
-    title: seo.title[locale],
-    description: seo.description[locale],
-    keywords: seo.keywords.map((k) => k[locale]),
-  };
+  return buildPageMetadata(seoConfig.home, locale, '');
 }
 
 

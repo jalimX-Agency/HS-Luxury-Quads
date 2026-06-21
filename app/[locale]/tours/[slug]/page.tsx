@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { tourSeoConfig } from '@/content/seo';
+import { tourSeoConfig, tourJsonLd, buildPageMetadata } from '@/content/seo';
 import { fetchTourBySlug } from '@/lib/queries';
 import { prisma } from '@/lib/prisma';
 import { toTour } from '@/lib/tours';
@@ -39,10 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const seo = tourSeoConfig[params.slug as keyof typeof tourSeoConfig];
   if (seo) {
-    return {
-      title: seo.title[locale],
-      description: seo.description[locale],
-    };
+    return buildPageMetadata(seo, locale, `/tours/${params.slug}`);
   }
 
   const result = await fetchTourBySlug(params.slug);
@@ -51,6 +48,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${result.tour.title[locale]} | HS Luxury Quads`,
     description: result.tour.shortDescription[locale],
+    openGraph: {
+      title: `${result.tour.title[locale]} | HS Luxury Quads`,
+      description: result.tour.shortDescription[locale],
+      images: result.tour.images?.[0] ? [{ url: result.tour.images[0] }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${result.tour.title[locale]} | HS Luxury Quads`,
+      description: result.tour.shortDescription[locale],
+    },
   };
 }
 
@@ -70,7 +78,17 @@ export default async function TourDetailPage({ params }: PageProps) {
   const heroImage = data.tour.images?.[0] ?? null;
   const toursList = [tour];
 
-  const jsonLd = tourSeoConfig[params.slug as keyof typeof tourSeoConfig]?.jsonLd ?? [];
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `https://hsluxuryquads.com/${locale}` },
+      { '@type': 'ListItem', position: 2, name: locale === 'en' ? 'Tours' : 'Circuits', item: `https://hsluxuryquads.com/${locale}/tours` },
+      { '@type': 'ListItem', position: 3, name: tour.title[locale], item: `https://hsluxuryquads.com/${locale}/tours/${params.slug}` },
+    ],
+  };
+
+  const jsonLd = [...tourJsonLd(tour, locale), breadcrumbSchema];
 
   return (
     <>

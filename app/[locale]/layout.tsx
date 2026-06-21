@@ -37,6 +37,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://hsluxuryquads.com'),
   title: 'HS Luxury Quads',
   description: 'Premium desert quad biking experiences in Marrakech, Morocco.',
 };
