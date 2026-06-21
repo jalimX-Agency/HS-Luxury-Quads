@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import type { Locale } from '@/content/tours';
 import type { ApiGalleryItem } from '@/lib/api-client';
-import Lightbox from '@/components/ui/Lightbox';
+import dynamic from 'next/dynamic';
+const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
 const CATEGORIES: Record<string, { en: string; fr: string }> = {
   all:    { en: 'All',            fr: 'Tout' },

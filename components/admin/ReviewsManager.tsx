@@ -93,7 +93,6 @@ export default function ReviewsManager({ reviews: initialReviews, tours }: Revie
 
       resetForm();
       router.refresh();
-      window.location.reload();
     } catch {
       // handled in hook
     }

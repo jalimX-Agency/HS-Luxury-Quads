@@ -60,7 +60,7 @@ export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
   }
 
   return (
-    <html lang={locale} className="scroll-smooth" data-theme="light">
+    <html lang={locale} className="scroll-smooth" data-theme="light" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

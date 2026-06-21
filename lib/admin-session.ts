@@ -13,11 +13,19 @@ interface SessionPayload extends AdminSession {
   exp: number;
 }
 
+const WEAK_DEFAULT_SECRET = 'HS_Luxury_Quads_Admin_Session_Secret';
+
 function getSessionSecret() {
   const secret = process.env.SESSION_SECRET || process.env.ADMIN_SECRET;
 
   if (!secret) {
     throw new Error('SESSION_SECRET must be configured');
+  }
+
+  if (process.env.NODE_ENV === 'production' && secret === WEAK_DEFAULT_SECRET) {
+    throw new Error(
+      'SESSION_SECRET is set to the known weak default. Generate a strong value (e.g. `openssl rand -hex 32`).',
+    );
   }
 
   return secret;

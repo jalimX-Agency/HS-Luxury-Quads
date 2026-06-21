@@ -5,16 +5,24 @@ const base = 'https://hsluxuryquads.com';
 const locales = ['en', 'fr'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tours, blogPosts] = await Promise.all([
-    prisma.tour.findMany({
-      where: { isActive: true },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.blogPost.findMany({
-      where: { isPublished: true },
-      select: { slug: true, updatedAt: true },
-    }),
-  ]);
+  // Fetch dynamic routes, but never let a DB hiccup at build time fail the
+  // whole build — fall back to static routes only.
+  let tours: { slug: string; updatedAt: Date }[] = [];
+  let blogPosts: { slug: string; updatedAt: Date }[] = [];
+  try {
+    [tours, blogPosts] = await Promise.all([
+      prisma.tour.findMany({
+        where: { isActive: true },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.blogPost.findMany({
+        where: { isPublished: true },
+        select: { slug: true, updatedAt: true },
+      }),
+    ]);
+  } catch (error) {
+    console.error('[sitemap] Failed to load dynamic routes, using static only:', error);
+  }
 
   const staticRoutes = [
     { path: '', priority: 1.0 },

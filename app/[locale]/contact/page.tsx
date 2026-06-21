@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Mail, MapPin, Clock, Globe } from 'lucide-react';

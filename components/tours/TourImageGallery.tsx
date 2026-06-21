@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import Lightbox from '@/components/ui/Lightbox';
+import dynamic from 'next/dynamic';
+
+const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
 interface TourImageGalleryProps {
   images: string[];
@@ -11,11 +13,8 @@ interface TourImageGalleryProps {
 
 export default function TourImageGallery({ images, alt }: TourImageGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
-
-  if (!mounted || images.length <= 1) return null;
+  if (images.length <= 1) return null;
 
   const lightboxImages = images.map((src) => ({ src, alt }));
 

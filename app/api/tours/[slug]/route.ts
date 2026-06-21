@@ -1,6 +1,5 @@
-import { prisma } from '@/lib/prisma';
 import { handleApiError, jsonError, jsonSuccess } from '@/lib/api-response';
-import { serializeTour } from '@/lib/tours';
+import { fetchTourBySlug } from '@/lib/queries';
 
 interface RouteParams {
   params: {
@@ -16,34 +15,13 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return jsonError('Tour slug is required', 400);
     }
 
-    const tour = await prisma.tour.findUnique({
-      where: { slug },
-      include: {
-        reviews: {
-          where: { isPublished: true },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
-    });
+    const result = await fetchTourBySlug(slug);
 
-    if (!tour || !tour.isActive) {
+    if (!result) {
       return jsonError('Tour not found', 404);
     }
 
-    const { reviews, ...tourData } = tour;
-
-    return jsonSuccess({
-      tour: serializeTour(tourData),
-      reviews: reviews.map((review) => ({
-        id: review.id,
-        name: review.name,
-        rating: review.rating,
-        country: review.country,
-        flag: review.flag,
-        date: review.reviewDate,
-        text: review.text,
-      })),
-    });
+    return jsonSuccess(result);
   } catch (error) {
     return handleApiError(error);
   }

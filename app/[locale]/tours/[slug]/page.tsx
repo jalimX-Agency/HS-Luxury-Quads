@@ -3,13 +3,15 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
 import { tourSeoConfig } from '@/content/seo';
-import { getTourBySlug } from '@/lib/api-client';
+import { fetchTourBySlug } from '@/lib/queries';
 import { prisma } from '@/lib/prisma';
 import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TourTracker from '@/components/tours/TourTracker';
 import TourImageGallery from '@/components/tours/TourImageGallery';
+
+export const revalidate = 1800;
 
 interface PageProps {
   params: {
@@ -43,15 +45,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  try {
-    const { tour } = await getTourBySlug(params.slug);
-    return {
-      title: `${tour.title[locale]} | HS Luxury Quads`,
-      description: tour.shortDescription[locale],
-    };
-  } catch {
-    return {};
-  }
+  const result = await fetchTourBySlug(params.slug);
+  if (!result) return {};
+
+  return {
+    title: `${result.tour.title[locale]} | HS Luxury Quads`,
+    description: result.tour.shortDescription[locale],
+  };
 }
 
 export default async function TourDetailPage({ params }: PageProps) {
@@ -61,10 +61,8 @@ export default async function TourDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  let data;
-  try {
-    data = await getTourBySlug(params.slug);
-  } catch {
+  const data = await fetchTourBySlug(params.slug);
+  if (!data) {
     notFound();
   }
 

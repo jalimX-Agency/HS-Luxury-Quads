@@ -110,7 +110,12 @@ export const GALLERY_CATEGORIES = ['all', 'quads', 'camel', 'dinner', 'camp'] as
 export type GalleryCategory = typeof GALLERY_CATEGORIES[number];
 
 export const galleryWriteSchema = z.object({
-  url: z.string().trim().min(1).max(500),
+  url: z
+    .string()
+    .trim()
+    .min(1)
+    .max(500)
+    .refine((v) => v.startsWith('https://'), 'Image URL must be an https:// URL'),
   alt: localizedStringSchema,
   imageKey: z.string().trim().optional().nullable(),
   category: z.enum(GALLERY_CATEGORIES).default('all'),

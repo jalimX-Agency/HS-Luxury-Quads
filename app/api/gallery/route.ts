@@ -1,22 +1,10 @@
 import { handleApiError, jsonSuccess } from '@/lib/api-response';
-import { prisma } from '@/lib/prisma';
+import { fetchActiveGallery } from '@/lib/queries';
 
 export async function GET() {
   try {
-    const items = await prisma.gallery.findMany({
-      where: { isActive: true },
-      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
-    });
-
-    return jsonSuccess({
-      gallery: items.map((item) => ({
-        id: item.id,
-        url: item.url,
-        alt: item.alt,
-        category: item.category,
-        sortOrder: item.sortOrder,
-      })),
-    });
+    const gallery = await fetchActiveGallery();
+    return jsonSuccess({ gallery });
   } catch (error) {
     return handleApiError(error);
   }

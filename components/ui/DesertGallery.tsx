@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import Lightbox from '@/components/ui/Lightbox';
+import dynamic from 'next/dynamic';
+
+const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
 interface DesertGalleryItem {
   url: string;
@@ -15,9 +17,6 @@ interface DesertGalleryProps {
 
 export default function DesertGallery({ items }: DesertGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
 
   const open = (i: number) => setLightboxIndex(i);
   const close = () => setLightboxIndex(null);
@@ -31,7 +30,6 @@ export default function DesertGallery({ items }: DesertGalleryProps) {
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-2 gap-1" style={{ height: 'clamp(400px, 55vw, 700px)' }}>
-        {/* Large left tile */}
         {items[0] && (
           <div className={`col-span-5 row-span-2 ${tileClass}`} onClick={() => open(0)}>
             <div className={overlay} />
@@ -64,7 +62,7 @@ export default function DesertGallery({ items }: DesertGalleryProps) {
         )}
       </div>
 
-      {mounted && lightboxIndex !== null && (
+      {lightboxIndex !== null && (
         <Lightbox images={lightboxImages} startIndex={lightboxIndex} onClose={close} />
       )}
     </>

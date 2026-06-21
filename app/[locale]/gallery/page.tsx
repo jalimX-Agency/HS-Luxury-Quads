@@ -1,9 +1,9 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
-import { getGallery } from '@/lib/api-client';
+import { fetchActiveGallery } from '@/lib/queries';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Gallery from '@/components/ui/Gallery';
@@ -30,7 +30,7 @@ export default async function GalleryPage({ params }: PageProps) {
     notFound();
   }
 
-  const images = await getGallery();
+  const images = await fetchActiveGallery();
 
   return (
     <>

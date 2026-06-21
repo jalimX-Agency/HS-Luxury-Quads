@@ -1,10 +1,10 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from '@/content/tours';
 import { seoConfig } from '@/content/seo';
-import { getTours } from '@/lib/api-client';
+import { fetchActiveTours } from '@/lib/queries';
 import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -35,7 +35,7 @@ export default async function ToursPage({ params }: PageProps) {
     notFound();
   }
 
-  const apiTours = await getTours();
+  const apiTours = await fetchActiveTours();
   const tours = apiTours.map(toTour);
 
   const jsonLd = seoConfig.tours.jsonLd;
