@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import type { Locale } from '@/content/tours';
 import type { ApiGalleryItem } from '@/lib/api-client';
+import Lightbox from '@/components/ui/Lightbox';
 
 const CATEGORIES: Record<string, { en: string; fr: string }> = {
   all:    { en: 'All',            fr: 'Tout' },
@@ -43,8 +44,6 @@ export default function Gallery({ locale, images }: GalleryProps) {
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
-  const nextImage = () => lightboxIndex !== null && setLightboxIndex((lightboxIndex + 1) % filtered.length);
-  const prevImage = () => lightboxIndex !== null && setLightboxIndex((lightboxIndex - 1 + filtered.length) % filtered.length);
 
   if (images.length === 0) {
     return (
@@ -125,44 +124,12 @@ export default function Gallery({ locale, images }: GalleryProps) {
       )}
 
       {/* ── Lightbox ── */}
-      {lightboxIndex !== null && filtered[lightboxIndex] && (
-        <div className="fixed inset-0 z-[100] bg-background/96 backdrop-blur-md flex items-center justify-center p-6 animate-fadeIn">
-          <button
-            onClick={closeLightbox}
-            className="absolute top-6 right-6 w-10 h-10 border border-rule/30 flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold transition-colors z-[110]"
-          >
-            ✕
-          </button>
-          <button
-            onClick={prevImage}
-            className="absolute left-6 w-10 h-10 border border-rule/30 flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold transition-colors z-[110]"
-          >
-            ⟨
-          </button>
-          <button
-            onClick={nextImage}
-            className="absolute right-6 w-10 h-10 border border-rule/30 flex items-center justify-center text-ink-muted hover:border-gold hover:text-gold transition-colors z-[110]"
-          >
-            ⟩
-          </button>
-          <div className="relative max-w-5xl max-h-[75vh] w-full h-full flex flex-col items-center justify-center">
-            <div className="relative w-full h-full">
-              <Image
-                alt={filtered[lightboxIndex].alt[locale]}
-                src={filtered[lightboxIndex].url}
-                fill
-                className="object-contain filter saturate-[0.9]"
-                priority
-              />
-            </div>
-            <p className="font-syne text-[10px] text-center text-gold mt-6 tracking-widest uppercase">
-              {filtered[lightboxIndex].alt[locale]}
-            </p>
-            <p className="font-syne text-[9px] text-ink-faint mt-1 tracking-wider">
-              {lightboxIndex + 1} / {filtered.length}
-            </p>
-          </div>
-        </div>
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={filtered.map((img) => ({ src: img.url, alt: img.alt[locale] }))}
+          startIndex={lightboxIndex}
+          onClose={closeLightbox}
+        />
       )}
     </div>
   );

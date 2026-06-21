@@ -9,6 +9,7 @@ import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TourTracker from '@/components/tours/TourTracker';
+import TourImageGallery from '@/components/tours/TourImageGallery';
 
 interface PageProps {
   params: {
@@ -112,6 +113,8 @@ export default async function TourDetailPage({ params }: PageProps) {
           </p>
         </div>
       </header>
+
+      <TourImageGallery images={data.tour.images ?? []} alt={tour.title[locale]} />
 
       <main className="py-20 px-gutter max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-12">
