@@ -9,9 +9,7 @@ import { toTour } from '@/lib/tours';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TourTracker from '@/components/tours/TourTracker';
-import dynamic from 'next/dynamic';
-
-const TourImageGallery = dynamic(() => import('@/components/tours/TourImageGallery'), { ssr: false });
+import TourImageGallery from '@/components/tours/TourImageGallery';
 
 interface PageProps {
   params: {

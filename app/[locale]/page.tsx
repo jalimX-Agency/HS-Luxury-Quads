@@ -13,6 +13,7 @@ import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { FadeIn } from '@/components/ui/FadeIn';
+import DesertGallery from '@/components/ui/DesertGallery';
 
 interface PageProps {
   params: {
@@ -488,37 +489,12 @@ export default async function HomePage({ params }: PageProps) {
           <p className="section-label">{t.galleryLabel}</p>
         </div>
         {galleryItems.length > 0 ? (
-          <div className="grid grid-cols-12 grid-rows-2 gap-1" style={{ height: 'clamp(400px, 55vw, 700px)' }}>
-            <div className="col-span-5 row-span-2 gallery-item relative">
-              <Image
-                alt={(galleryItems[0]?.alt as { en: string })?.en ?? ''}
-                src={galleryItems[0]!.url}
-                fill
-                className="object-cover filter saturate-[0.8]"
-                sizes="42vw"
-              />
-            </div>
-            {galleryItems[1] && (
-              <div className="col-span-4 row-span-1 gallery-item relative">
-                <Image alt={(galleryItems[1].alt as { en: string })?.en ?? ''} src={galleryItems[1].url} fill className="object-cover filter saturate-[0.8]" sizes="33vw" />
-              </div>
-            )}
-            {galleryItems[2] && (
-              <div className="col-span-3 row-span-1 gallery-item relative">
-                <Image alt={(galleryItems[2].alt as { en: string })?.en ?? ''} src={galleryItems[2].url} fill className="object-cover filter saturate-[0.8]" sizes="25vw" />
-              </div>
-            )}
-            {galleryItems[3] && (
-              <div className="col-span-4 row-span-1 gallery-item relative">
-                <Image alt={(galleryItems[3].alt as { en: string })?.en ?? ''} src={galleryItems[3].url} fill className="object-cover filter saturate-[0.8]" sizes="33vw" />
-              </div>
-            )}
-            {galleryItems[4] && (
-              <div className="col-span-3 row-span-1 gallery-item relative">
-                <Image alt={(galleryItems[4].alt as { en: string })?.en ?? ''} src={galleryItems[4].url} fill className="object-cover filter saturate-[0.8]" sizes="25vw" />
-              </div>
-            )}
-          </div>
+          <DesertGallery
+            items={galleryItems.map((item) => ({
+              url: item.url,
+              alt: (item.alt as { en: string; fr: string })[locale] ?? (item.alt as { en: string })?.en ?? '',
+            }))}
+          />
         ) : (
           <div className="h-64 flex items-center justify-center border border-dashed border-rule/30">
             <p className="text-xs text-ink-faint">Gallery images will appear here once uploaded.</p>
